@@ -46,13 +46,22 @@ export const getProductProposal = (userPreferences) => {
     .catch((error) => { console.error(error); future.return(); });
   const response = future.wait();
   // Obtain only products with their categories
-  const products = [];
+  const products = {};
   response.foods.forEach((element) => {
-    products.push({
-      name: element.food_name,
-      category: categories[element.id_food_super_family],
-    });
+    const key = categories[element.id_food_super_family];
+    if (key in products) {
+      products[key].push({
+        name: element.food_name,
+        // category: key,
+      });
+    } else {
+      products[key] = [{
+        name: element.food_name,
+        // category: key,
+      }];
+    }
   });
+  console.log(products);
   return products;
 };
 

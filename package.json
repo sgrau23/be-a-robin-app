@@ -1,5 +1,5 @@
 {
-  "name": "be_robin_app",
+  "name": "be_a_robin_app",
   "private": true,
   "scripts": {
     "start": "meteor run",
