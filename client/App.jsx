@@ -34,6 +34,7 @@ import { CustomerFooterNavbar } from './components/CustomerFooterNavbar';
 import { mainTheme } from './styles/theme';
 
 import { Chat } from './components/Chat';
+import { PurchaseOptimizer } from './pages/customer/PurchaseOptimizer';
 
 const MainContainer = styled.div`
   min-height: 100vh;
@@ -97,6 +98,8 @@ export function App() {
 
                               <PropsRoute exact path="/supermarkets" component={Supermarkets} />
                               <PropsRoute exact path="/supermarkets/:id" component={SupermarketProducts} />
+
+                              <PropsRoute exact path="/purchaseOptimizer" component={PurchaseOptimizer} />
 
                               <PropsRoute exact path="/" component={CustomerDashboard} />
                             </>

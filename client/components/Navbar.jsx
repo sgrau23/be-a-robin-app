@@ -15,6 +15,7 @@ import {
   Link, useHistory,
 } from 'react-router-dom';
 import { breadcumbsMapping } from '../lib/breadcumbs';
+import { getPreviousPath } from '../lib/utils';
 
 export function Navbar() {
   // Translations
@@ -23,12 +24,6 @@ export function Navbar() {
   const [anchorNotifications, setAnchorNotifications] = React.useState(null);
   const { userType } = Meteor.user().profile.attributes;
   const history = useHistory();
-
-  const getPreviousPath = (path) => {
-    const str = `${path.substr(path.lastIndexOf('/') + 1)}$`;
-    if (str === '$') return '/';
-    return path.replace(new RegExp(str), '');
-  };
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);

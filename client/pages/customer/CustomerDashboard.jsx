@@ -24,7 +24,7 @@ export function CustomerDashboard() {
       key: 'marketRastreator',
     },
     {
-      component: <DashboardCard logo="" contentText={t('Optmiza tu compra')} route="/purchase" />,
+      component: <DashboardCard logo="" contentText={t('Optmiza tu compra')} route="/purchaseOptimizer" />,
       key: 'compra',
     },
     {

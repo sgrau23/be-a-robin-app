@@ -61,7 +61,6 @@ export const getProductProposal = (userPreferences) => {
       }];
     }
   });
-  console.log(products);
   return products;
 };
 
