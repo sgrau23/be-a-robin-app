@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -11,21 +12,28 @@ import {
 } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core';
+import $ from 'jquery';
 import { getPreviousPath } from '../lib/utils';
+import { ResponsiveGrid } from './ResponsiveGrid';
 
 const StyledMobileStepper = withStyles({
   root: {
-    maxWidth: '100%',
+    maxWidth: '90%',
     flexGrow: 1,
   },
   progress: {
-    width: '95%',
+    maxWidth: '90%',
+    flexGrow: 1,
   },
 })(MobileStepper);
 
 const useStyles = makeStyles({
   selected: {
     border: '4px solid green',
+    opacity: 1,
+  },
+  selectedDislike: {
+    border: '2px solid green',
     opacity: 1,
   },
 });
@@ -78,12 +86,71 @@ function DietCard({
   );
 }
 
+function DislikeCard({
+  id, name, onClickDislikes, url,
+}) {
+  return (
+    <Grid
+      container
+      direction="column"
+      spacing={1}
+      justifyContent="center"
+      alignItems="center"
+    >
+      <Grid
+        item
+      >
+        <Box
+          id={id}
+          name={name}
+          key={id}
+          sx={{
+            width: '80px',
+            height: '80px',
+            borderRadius: 4,
+            boxShadow: 6,
+            padding: 1,
+          }}
+        >
+          <Box
+            onClick={onClickDislikes}
+            component="img"
+            id={id}
+            name={name}
+            sx={{
+              width: '70px',
+              height: '70px',
+              backgroundColor: 'transparent',
+            }}
+            alt=""
+            src={url}
+          />
+        </Box>
+
+      </Grid>
+      <Grid
+        item
+      >
+        <center>
+          <Typography color="inherit">
+            {name}
+          </Typography>
+        </center>
+
+      </Grid>
+    </Grid>
+
+  );
+}
+
 export function OptimizerPreferencesForm({ open, handleClose }) {
   const { t } = useTranslation();
-  const [optimizerPreferences, setOptimizerPreferences] = useState(Meteor.user().optimizerPreferences);
+  // const [optimizerPreferences, setOptimizerPreferences] = useState(Meteor.user().optimizerPreferences);
   const [selectedDiet, setSelectedDiet] = useState('no_preferences');
   const [activeStep, setActiveStep] = React.useState(0);
+  const [dislikes, setDislikes] = React.useState([]);
   const history = useHistory();
+  const classes = useStyles();
 
   useEffect(() => {
     // Meteor.call('lastMinute.getTotalProducts', (error, result) => {
@@ -103,8 +170,34 @@ export function OptimizerPreferencesForm({ open, handleClose }) {
 
   const onClickCard = (event) => {
     setSelectedDiet(event.target.id);
-    console.log(selectedDiet);
   };
+
+  const onClickDislikes = (event) => {
+    if (!dislikes.includes(event.target.id)) {
+      dislikes.push(event.target.id);
+      setDislikes(dislikes);
+      $(`#${event.target.id}`).addClass(classes.selectedDislike);
+    } else {
+      dislikes.splice(dislikes.indexOf(event.target.id), 1);
+      setDislikes(dislikes);
+      $(`#${event.target.id}`).removeClass(classes.selectedDislike);
+    }
+    console.log(dislikes);
+  };
+
+  const dislikeCategories = Meteor.settings.public.dislikeCategories.map(
+    (element) => (
+      {
+        component: <DislikeCard
+          id={element.id}
+          name={t(element.name)}
+          onClickDislikes={onClickDislikes}
+          url={element.img}
+        />,
+        key: element.id,
+      }
+    ),
+  );
 
   return (
     <Dialog
@@ -118,13 +211,11 @@ export function OptimizerPreferencesForm({ open, handleClose }) {
           <Button onClick={handleBack}>
             <ArrowBackIosRoundedIcon color="primary" />
           </Button>
-
           <StyledMobileStepper
             variant="progress"
-            steps={5}
+            steps={2}
             position="static"
             activeStep={activeStep}
-            sx={{ maxWidth: '600', flexGrow: 1 }}
           />
         </Toolbar>
       </AppBar>
@@ -156,61 +247,21 @@ export function OptimizerPreferencesForm({ open, handleClose }) {
               justifyContent="center"
               alignContent="center"
             >
-              <Grid
-                item
-              >
-                <DietCard
-                  id="no_preferences"
-                  url="no_preferences_diet.png"
-                  selectedDiet={selectedDiet}
-                  onClickCard={onClickCard}
-                  cardMessage={t('Sin preferencias')}
-                />
-              </Grid>
-              <Grid
-                item
-              >
-                <DietCard
-                  id="mediterranean"
-                  url="mediterranean_diet.png"
-                  selectedDiet={selectedDiet}
-                  onClickCard={onClickCard}
-                  cardMessage={t('Mediterránea')}
-                />
-              </Grid>
-              <Grid
-                item
-              >
-                <DietCard
-                  id="pescatarian"
-                  url="pescatarian_diet.png"
-                  selectedDiet={selectedDiet}
-                  onClickCard={onClickCard}
-                  cardMessage={t('Pescatariana')}
-                />
-              </Grid>
-              <Grid
-                item
-              >
-                <DietCard
-                  id="vegetarian"
-                  url="vegetarian_diet.png"
-                  selectedDiet={selectedDiet}
-                  onClickCard={onClickCard}
-                  cardMessage={t('Vegetariana')}
-                />
-              </Grid>
-              <Grid
-                item
-              >
-                <DietCard
-                  id="vegan"
-                  url="vegan_diet.png"
-                  selectedDiet={selectedDiet}
-                  onClickCard={onClickCard}
-                  cardMessage={t('Vegana')}
-                />
-              </Grid>
+              {
+                Meteor.settings.public.diets.map((element) => (
+                  <Grid
+                    item
+                  >
+                    <DietCard
+                      id={element.id}
+                      url={element.img}
+                      selectedDiet={selectedDiet}
+                      onClickCard={onClickCard}
+                      cardMessage={t(element.name)}
+                    />
+                  </Grid>
+                ))
+              }
               <Grid
                 item
                 sx={{
@@ -233,6 +284,58 @@ export function OptimizerPreferencesForm({ open, handleClose }) {
             </Grid>
           </>
 
+        )
+      }
+      {
+        activeStep === 1 && (
+          <>
+            <Box
+              sx={{
+                width: '100%',
+                marginTop: 2,
+              }}
+            >
+              <center>
+                <Typography color="primary">
+                  {t('¿Hay algún grupo de alimentos que no te guste?')}
+                </Typography>
+              </center>
+            </Box>
+            <div
+              style={{
+                paddingLeft: '10%',
+                paddingRight: '10%',
+                paddingTop: '20px',
+              }}
+            >
+              <ResponsiveGrid
+                containerSpacing={{
+                  xs: 5, sm: 8, md: 10, lg: 10,
+                }}
+                containerColumns={{
+                  xs: 12, sm: 12, md: 12, lg: 12,
+                }}
+                itemXs={4}
+                itemSm={4}
+                itemMd={3}
+                itemLg={3}
+                items={dislikeCategories}
+              />
+              <Button
+                onClick={handleNext}
+                size="small"
+                variant="contained"
+                sx={{
+                  marginTop: 4,
+                  width: '100%',
+                  boxShadow: 5,
+                  borderRadius: 10,
+                }}
+              >
+                {t('Siguiente')}
+              </Button>
+            </div>
+          </>
         )
       }
     </Dialog>

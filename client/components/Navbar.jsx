@@ -47,7 +47,7 @@ export function Navbar() {
   };
 
   return (
-    <AppBar>
+    <AppBar sx={{ backgroundColor: 'transparent', boxShadow: 0 }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {
@@ -58,7 +58,7 @@ export function Navbar() {
                 }}
               >
                 <Link to={getPreviousPath(useHistory().location.pathname)}>
-                  <ArrowBackIosRoundedIcon color="secondary" />
+                  <ArrowBackIosRoundedIcon color="primary" />
                 </Link>
               </Box>
             )
@@ -74,7 +74,7 @@ export function Navbar() {
               flexGrow: 1,
               // fontWeight: 600,
               // letterSpacing: '.3rem',
-              color: 'inherit',
+              color: 'primary.main',
               textDecoration: 'none',
             }}
           >
@@ -84,6 +84,7 @@ export function Navbar() {
           <Box sx={{ flexGrow: 0 }}>
             <PersonIcon
               onClick={handleOpenUserMenu}
+              color="primary"
             />
             <Menu
               sx={{ mt: '45px' }}
@@ -117,6 +118,7 @@ export function Navbar() {
             <Badge badgeContent={4} color="error">
               <NotificationsIcon
                 onClick={handleOpenNotifications}
+                color="primary"
               />
             </Badge>
             <Menu
