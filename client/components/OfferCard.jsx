@@ -35,7 +35,7 @@ export function OfferCard({
   const [loading, setLoading] = useState(false);
   const [productData, setProductData] = useState({
     name: offer.name,
-    category_name: offer.category_name,
+    category_id: offer.category_id,
     image: offer.image,
     price: offer.price,
     expirationDate: dayjs(offer.expirationDate, 'DD/MM/YYYY'),
@@ -243,14 +243,22 @@ export function OfferCard({
                   <InputLabel id="category-select-label">{t('Categoría Producto')}</InputLabel>
                   <Select
                     labelId="category-select-label"
-                    value={productData.category_name}
+                    value={productData.category_id}
                     label={t('Categoría Producto')}
                     onChange={onHandleProductData}
-                    name="category_name"
+                    name="category_id"
                     variant="filled"
                   >
                     {(
-                        categories.map((category) => (<MenuItem value={category} key={category}>{category}</MenuItem>))
+                        categories.map((category) => (
+                          <MenuItem
+                            id={category.id}
+                            value={category.id}
+                            key={category.id}
+                          >
+                            {t(category.name)}
+                          </MenuItem>
+                        ))
                     )}
                   </Select>
 

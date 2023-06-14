@@ -12,3 +12,5 @@ export const MarketsHistoricalLastMinuteProductsCollection = new Mongo.Collectio
 // CHAT CONVERSATIONS DB
 export const ChatConversationsCollection = new Mongo.Collection('chatConversations');
 export const ChatConversationsMessagesCollection = new Mongo.Collection('chatConversationsMessages');
+// OPTIMIZED PURCHASES
+export const OptimizedPurchaseCollection = new Mongo.Collection('optimizedPurchase');

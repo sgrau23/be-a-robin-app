@@ -142,6 +142,9 @@ Accounts.registerLoginHandler(service, (options) => {
   const attributes = getUserAttributes(options.email);
   // Decode JWT token
   const accessTokenInfo = jwtDecode(response.access_token);
+  // Check user preferences
+  console.log(accessTokenInfo.sid);
+  const user = Meteor.users.find({ 'profile.email': accessTokenInfo.email }).fetch();
   // Update or create user account
   const uid = Accounts.updateOrCreateUserFromExternalService(
     this.service,
@@ -159,6 +162,7 @@ Accounts.registerLoginHandler(service, (options) => {
         given_name: accessTokenInfo.given_name,
         family_name: accessTokenInfo.family_name,
         email: accessTokenInfo.email,
+        purchaseOptimizerPreferences: (user.length === 0 ? undefined : user[0].profile.purchaseOptimizerPreferences),
         savings: {
           currentMonthsavings: 0,
           currentMonthPotentialSavings: 0,
@@ -166,6 +170,7 @@ Accounts.registerLoginHandler(service, (options) => {
         attributes,
       },
     },
+    { upsert: true },
   );
   return uid;
 });

@@ -143,7 +143,7 @@ function DislikeCard({
   );
 }
 
-export function OptimizerPreferencesForm({ open, handleClose }) {
+export function OptimizerPreferencesForm({ open, handleClose, setOptimizerPreferences }) {
   const { t } = useTranslation();
   // const [optimizerPreferences, setOptimizerPreferences] = useState(Meteor.user().optimizerPreferences);
   const [selectedDiet, setSelectedDiet] = useState('no_preferences');
@@ -182,7 +182,6 @@ export function OptimizerPreferencesForm({ open, handleClose }) {
       setDislikes(dislikes);
       $(`#${event.target.id}`).removeClass(classes.selectedDislike);
     }
-    console.log(dislikes);
   };
 
   const dislikeCategories = Meteor.settings.public.dislikeCategories.map(
@@ -198,6 +197,29 @@ export function OptimizerPreferencesForm({ open, handleClose }) {
       }
     ),
   );
+
+  const optimizePurchase = (optimizerPreferences) => {
+    Meteor.call('purchaseOptimizer.optimize', optimizerPreferences, Meteor.user()._id, (error) => {
+      if (error) console.log(error);
+    });
+  };
+
+  const storePurchaseOptimizerPreferences = () => {
+    Meteor.call('purchaseOptimizer.storePreferences', dislikes, selectedDiet, Meteor.user()._id, (error) => {
+      if (error) console.log(error);
+    });
+  };
+
+  const handleOptimizePurchase = () => {
+    const optimizerPreferences = {
+      dislikes,
+      diet: selectedDiet,
+    };
+    storePurchaseOptimizerPreferences();
+    optimizePurchase(optimizerPreferences);
+    setOptimizerPreferences(optimizerPreferences);
+    // handleClose();
+  };
 
   return (
     <Dialog
@@ -322,7 +344,7 @@ export function OptimizerPreferencesForm({ open, handleClose }) {
                 items={dislikeCategories}
               />
               <Button
-                onClick={handleNext}
+                onClick={handleOptimizePurchase}
                 size="small"
                 variant="contained"
                 sx={{

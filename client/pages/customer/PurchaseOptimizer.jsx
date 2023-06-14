@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  Button,
+} from '@mui/material';
 import { OptimizerPreferencesForm } from '../../components/OptimizerPreferencesForm';
 
 export function PurchaseOptimizer() {
   const { t } = useTranslation();
-  const [optimizerPreferences, setOptimizerPreferences] = useState(Meteor.user().optimizerPreferences);
+  const [optimizerPreferences, setOptimizerPreferences] = useState(Meteor.user().profile.purchaseOptimizerPreferences);
   const [
     openOptimizerPreferencesForm, setOpenOptimizerPerferencesForm,
-  ] = useState(Meteor.user().optimizerPreferences === undefined);
+  ] = useState(optimizerPreferences === undefined);
 
   useEffect(() => {
     // Meteor.call('lastMinute.getTotalProducts', (error, result) => {
@@ -43,6 +46,12 @@ export function PurchaseOptimizer() {
   //     },
   //   ];
 
+  const optimizePurchase = () => {
+    Meteor.call('purchaseOptimizer.optimize', { dislikes: ['eggs'], diet: 'mediterranean' }, Meteor.user()._id, (error) => {
+      if (error) console.log(error);
+    });
+  };
+
   return (
     <>
       {
@@ -51,11 +60,12 @@ export function PurchaseOptimizer() {
                 <OptimizerPreferencesForm
                   open={openOptimizerPreferencesForm}
                   handleClose={onHandleCloseOptimizerPreferencesForm}
+                  setOptimizerPreferences={setOptimizerPreferences}
                 />
               )
 
               : (
-                <div>HOLA</div>
+                <Button onClick={optimizePurchase}>HOLA</Button>
               )
 
         }

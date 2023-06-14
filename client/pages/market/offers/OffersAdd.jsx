@@ -32,7 +32,7 @@ console.log(esES.components.MuiLocalizationProvider.defaultProps.localeText);
 
 const defaultProductData = {
   name: '',
-  category_name: '',
+  category_id: '',
   image: undefined,
   price: 0,
   expirationDate: dayjs().endOf('week'),
@@ -226,14 +226,22 @@ export function OffersAdd() {
                   <InputLabel id="category-select-label">{t('Categoría Producto')}</InputLabel>
                   <Select
                     labelId="category-select-label"
-                    value={productData.category_name}
+                    value={productData.category_id}
                     label={t('Categoría Producto')}
                     onChange={onHandleProductData}
-                    name="category_name"
+                    name="category_id"
                     variant="filled"
                   >
                     {(
-                        categories.map((category) => (<MenuItem value={category} key={category}>{category}</MenuItem>))
+                        categories.map((category) => (
+                          <MenuItem
+                            id={category.id}
+                            value={category.id}
+                            key={category.id}
+                          >
+                            {t(category.name)}
+                          </MenuItem>
+                        ))
                     )}
                   </Select>
 

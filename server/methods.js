@@ -3,12 +3,14 @@ import { check } from 'meteor/check';
 import { ContactEmergency } from '@mui/icons-material';
 import { createUser } from './openid';
 import {
-  ProductCategoriesCollection, MarketsOfferProductsTemporalCollection,
+  MarketsOfferProductsTemporalCollection,
   MarketsOfferProductsCollection, MarketsHistoricalOfferProductsCollection,
   MarketsLastMinuteProductsTemporalCollection,
   MarketsLastMinuteProductsCollection, MarketsHistoricalLastMinuteProductsCollection,
   ChatConversationsCollection, ChatConversationsMessagesCollection,
+  OptimizedPurchaseCollection,
 } from '../imports/db/collections';
+import { getProductProposal } from './inuba';
 
 const { settings } = Meteor;
 
@@ -38,6 +40,29 @@ const removeHistoricalLastMinute = (_id) => {
   MarketsHistoricalLastMinuteProductsCollection.remove({ _id });
 };
 
+const getCloserMarket = (markets, userId) => markets[0];
+
+const getOnSalesMarketProducts = (marketName, optimizerPreferences, category) => {
+  const result = MarketsOfferProductsCollection.find({
+    marketName,
+    category_id: category,
+  }).fetch();
+  if (result.length === 0) return {};
+  const data = { products: [], marketName };
+  result.forEach((product) => {
+    data.products.push({
+      name: product.name,
+      offerPrice: product.price,
+    });
+  });
+  return data;
+};
+
+const assignInubaProducts2CloserMarket = (inubaProducts, userId) => ({
+  products: inubaProducts,
+  marketName: 'Sin mercado',
+});
+
 Meteor.methods({
   'users.createUser': async (userData, userCommonData, userTypeData) => {
     check(userData, Object);
@@ -48,7 +73,15 @@ Meteor.methods({
     if (result.status === 400) throw new Meteor.Error(result.message);
     return true;
   },
-  'products.categories': () => ProductCategoriesCollection.find().fetch().map((category) => category.category_name),
+  'products.categories': () => {
+    const categories = [];
+    settings.public.dislikeCategories.forEach((category) => {
+      categories.push({
+        name: category.name, id: category.id,
+      });
+    });
+    return categories;
+  },
   'products.createTemporalOffer': (productData, marketId) => {
     check(productData, Object);
     check(marketId, String);
@@ -96,7 +129,6 @@ Meteor.methods({
       { _id }, { $set: offer },
     );
   },
-
   'products.createTemporalLastMinute': (productData, marketId) => {
     check(productData, Object);
     check(marketId, String);
@@ -217,5 +249,57 @@ Meteor.methods({
       },
       { multi: true },
     );
+  },
+  'purchaseOptimizer.storePreferences': (dislikes, diet, _id) => {
+    check(dislikes, Array);
+    check(_id, String);
+    check(diet, String);
+    Meteor.users.update(
+      { _id },
+      {
+        $set: {
+          'profile.purchaseOptimizerPreferences': {
+            dislikes,
+            diet,
+          },
+        },
+      },
+    );
+  },
+  'purchaseOptimizer.optimize': (optimizerPreferences, _id) => {
+    check(optimizerPreferences, Object);
+    check(_id, String);
+    // Get iNuba purpose
+    const inubaPurpose = getProductProposal(optimizerPreferences);
+    const finalPurpose = {};
+    const involvedMarkets = [];
+    settings.public.dislikeCategories.forEach((category) => {
+      // Get available markets for current category
+      const availableMarkets = Meteor.users.find(
+        { 'profile.attributes.marketCategories': { $regex: new RegExp(`.*${category.id}.*`) } },
+      ).fetch();
+      // Get closer market
+      const closerMarket = getCloserMarket(availableMarkets, _id);
+      let productsInfo = {};
+      // Get products in sales of closer market if it exists
+      if (closerMarket) {
+        productsInfo = getOnSalesMarketProducts(
+          closerMarket.profile.attributes.marketName, optimizerPreferences, category.id,
+        );
+      }
+      // If there is no products get inuba purpose for current category
+      if (Object.keys(productsInfo).length === 0) {
+        productsInfo = assignInubaProducts2CloserMarket(
+          productsInfo = inubaPurpose[category.id],
+          _id,
+        );
+      }
+      // Add to final purpose
+      finalPurpose[category.id] = productsInfo;
+      if (!involvedMarkets.includes(productsInfo.marketName)) involvedMarkets.push(productsInfo.marketName);
+    });
+    // Store final purpose
+    OptimizedPurchaseCollection.update({ _id }, { $set: { purpose: finalPurpose, involvedMarkets } }, { upsert: true });
+    return finalPurpose;
   },
 });

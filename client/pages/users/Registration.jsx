@@ -4,21 +4,44 @@ import {
   Backdrop, Grid, Divider, CircularProgress, FormControl, Box,
   FormLabel, Avatar, Link, InputAdornment, IconButton, FormControlLabel, RadioGroup,
   Radio, InputLabel, Select, MenuItem, Alert, DialogTitle, DialogContentText,
-  DialogContent, DialogActions, Dialog, Button,
+  DialogContent, DialogActions, Dialog, Button, Chip,
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { Link as RouteLink } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
+import { useTheme } from '@mui/material/styles';
 import {
   WhiteTypography, TextInput, RoundedButton, GreenTypography,
 } from '../../styles/styledComponents';
 
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+function getStyles(name, personName, theme) {
+  return {
+    fontWeight:
+      personName.indexOf(name) === -1
+        ? theme.typography.fontWeightRegular
+        : theme.typography.fontWeightMedium,
+  };
+}
+
 export function Registration() {
+  const theme = useTheme();
   // Translations
   const { t } = useTranslation();
   // Confirmation dialog variables
   const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
+  const [categories, setCategories] = useState([]);
   const onHandleCloseConfirmationDialog = () => {
     setOpenConfirmationDialog(false);
   };
@@ -60,15 +83,26 @@ export function Registration() {
     // secondName: '',
     // diet: '',
   });
+  Meteor.call('products.categories', (error, result) => {
+    if (error) console.log(error);
+    else setCategories(result);
+  });
   const onHandleCustomerData = (e) => {
     setCustomerData({ ...customerData, [e.target.name]: e.target.value });
   };
   // Market user  data
   const [marketData, setMarketData] = useState({
     marketName: '',
+    marketCategories: [],
   });
   const onHandleMarketData = (e) => {
     setMarketData({ ...marketData, [e.target.name]: e.target.value });
+  };
+  const onHandleCategories = (event) => {
+    const {
+      target: { value },
+    } = event;
+    marketData.marketCategories = (typeof value === 'string' ? value.split(',') : value);
   };
   // Loading page
   const [loading, setLoading] = useState(false);
@@ -79,6 +113,7 @@ export function Registration() {
       e.preventDefault();
       return false;
     }
+    marketData.marketCategories = marketData.marketCategories.join(',');
     Meteor.call(
       'users.createUser',
       userData,
@@ -100,7 +135,7 @@ export function Registration() {
   return (
     <>
       <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        sx={{ color: '#fff', zIndex: (th) => th.zIndex.drawer + 1 }}
         open={loading}
       >
         <CircularProgress color="success" />
@@ -414,6 +449,48 @@ export function Registration() {
                 <WhiteTypography variant="h6" align="left">
                   {t(`Datos cuenta ${userData.userType}:`)}
                 </WhiteTypography>
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                md={12}
+                lg={12}
+              >
+                <FormControl fullWidth>
+                  <InputLabel id="category-select-label">{t('Categorías Mercado')}</InputLabel>
+                  <Select
+                    labelId="category-select-label"
+                    multiple
+                    value={marketData.marketCategories}
+                    label={t('Categorías Mercado')}
+                    onChange={onHandleCategories}
+                    name="marketCategories"
+                    variant="filled"
+                    renderValue={(selected) => (
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                        {selected.map((value) => (
+                          <Chip key={value} label={value} />
+                        ))}
+                      </Box>
+                    )}
+                    MenuProps={MenuProps}
+                  >
+                    {(
+                        categories.map((category) => (
+                          <MenuItem
+                            id={category.id}
+                            value={category.id}
+                            key={category.id}
+                            style={getStyles(category.name, marketData.marketCategories, theme)}
+                          >
+                            {t(category.name)}
+                          </MenuItem>
+                        ))
+                    )}
+                  </Select>
+
+                </FormControl>
               </Grid>
               <Grid item xs={12}>
                 <TextInput

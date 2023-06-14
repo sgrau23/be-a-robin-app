@@ -12,16 +12,16 @@
         "codeDevice": "be_robin",
         "codeCenter": "be_robin",
         "categories": {
-            "1": "Cereales y derivados",
-            "2": "Huevos y lácteos",
-            "3": "Carne y derivados",
-            "4": "Frutas",
-            "5": "Verduras y hortalizas",
-            "6": "Grasas y aceites",
-            "9": "Pescados y mariscos",
+            "1": "grains",
+            "2": "eggs",
+            "3": "meat",
+            "4": "fruits",
+            "5": "vegetables",
+            "6": "oils",
+            "9": "fish",
             "10": "Otros",
-            "12": "Legumbres y derivados",
-            "14": "Especias y salsas"
+            "12": "legumes",
+            "14": "species"
         }
     },
     "public": {
