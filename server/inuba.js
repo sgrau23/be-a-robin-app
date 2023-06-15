@@ -47,19 +47,23 @@ export const getProductProposal = (userPreferences) => {
   const response = future.wait();
   // Obtain only products with their categories
   const products = {};
+  const names = [];
   response.foods.forEach((element) => {
     const key = categories[element.id_food_super_family];
     if (key in products) {
-      products[key].push({
-        name: element.food_name,
-        // category: key,
-      });
+      if (!names.includes(element.food_name)) {
+        products[key].push({
+          name: element.food_name,
+          category: key,
+        });
+      }
     } else {
       products[key] = [{
         name: element.food_name,
-        // category: key,
+        category: key,
       }];
     }
+    names.push(element.food_name);
   });
   return products;
 };

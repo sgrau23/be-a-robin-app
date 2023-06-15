@@ -52,7 +52,7 @@ const getOnSalesMarketProducts = (marketName, optimizerPreferences, category) =>
   result.forEach((product) => {
     data.products.push({
       name: product.name,
-      offerPrice: product.price,
+      price: product.price,
     });
   });
   return data;
@@ -300,6 +300,12 @@ Meteor.methods({
     });
     // Store final purpose
     OptimizedPurchaseCollection.update({ _id }, { $set: { purpose: finalPurpose, involvedMarkets } }, { upsert: true });
-    return finalPurpose;
+    return { purpose: finalPurpose, involvedMarkets };
+  },
+  'purchaseOptimizer.get': (_id) => {
+    check(_id, String);
+    const purpose = OptimizedPurchaseCollection.find({ _id }).fetch();
+    if (purpose.length > 0) return purpose[0];
+    return {};
   },
 });

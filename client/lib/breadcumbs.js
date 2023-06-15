@@ -9,4 +9,7 @@ export const breadcumbsMapping = {
   '/lastminute/manage': 'Gestionar Last Minute',
   '/lastminute/historical': 'Histórico Last Minute',
   '/marketsOffers': 'Comercios Proximidad',
+  '/purchaseOptimizer': 'Optimizador Compra',
+  '/supermarkets': 'Supermercados',
+  '/marketsLastMinute': 'Last Minute',
 };

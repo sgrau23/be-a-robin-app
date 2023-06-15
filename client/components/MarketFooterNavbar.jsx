@@ -42,6 +42,7 @@ export function MarketFooterNavbar() {
         backgroundColor: 'primary.main',
         display: 'flex',
       }}
+
       style={{ maxWidth: '100%' }}
     >
       <Toolbar

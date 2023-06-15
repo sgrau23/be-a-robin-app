@@ -138,6 +138,12 @@ export function Conversation({ data }) {
         open={openMessages}
         onClose={() => setOpenMessages(false)}
         // TransitionComponent={Transition}
+        PaperProps={{
+          style: {
+            backgroundColor: '#e6e6e6',
+            boxShadow: 'none',
+          },
+        }}
       >
         <AppBar sx={{ position: 'relative' }}>
           <Toolbar>

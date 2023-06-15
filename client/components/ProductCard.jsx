@@ -4,11 +4,12 @@ import {
   Card, CardContent, CardMedia, Grid, CardActions, Typography,
 } from '@mui/material';
 // import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { CardImage } from './CardImage';
 import { mainTheme } from '../styles/theme';
 
-export function ProductCard({ product, market = false }) {
-  // const { t } = useTranslation();
+export function ProductCard({ product, market = false, marketName = '' }) {
+  const { t } = useTranslation();
   return (
     <Card
       sx={{
@@ -38,7 +39,6 @@ export function ProductCard({ product, market = false }) {
           >
 
             <Grid item xs={12} sm={12} md={12} lg={12}>
-
               <Typography variant="h7">
                 {product.name}
               </Typography>
@@ -48,26 +48,46 @@ export function ProductCard({ product, market = false }) {
               {
                 !market ? (
                   <>
-                    <Typography
-                  // align="left"
-                      variant="h6"
-                      sx={{
-                        fontWeight: 'bold',
-                      }}
-                    >
-                      {`${product.price_info.price}€`}
-                    </Typography>
-                    <Typography
-                // align="left"
-                      variant="h6"
-                      sx={{
-                        marginLeft: 1,
-                        textDecoration: 'line-through',
-                        color: 'red',
-                      }}
-                    >
-                      {`${product.price_info.prev_price}€`}
-                    </Typography>
+                    {
+                      product.price_info && (
+                      <>
+                        <Typography
+                          // align="left"
+                          variant="h6"
+                          sx={{
+                            fontWeight: 'bold',
+                          }}
+                        >
+                          {`${product.price_info.price}€`}
+                        </Typography>
+                        <Typography
+                          // align="left"
+                          variant="h6"
+                          sx={{
+                            marginLeft: 1,
+                            textDecoration: 'line-through',
+                            color: 'red',
+                          }}
+                        >
+                          {`${product.price_info.prev_price}€`}
+                        </Typography>
+                      </>
+                      )
+                    }
+                    {
+                      !product.price_info && (
+                        <Typography
+                          // align="left"
+                          variant="h6"
+                          sx={{
+                            fontWeight: 'bold',
+                          }}
+                        >
+                          {(product.price ? `${product.price}€` : '')}
+                        </Typography>
+                      )
+                    }
+
                   </>
 
                 ) : (
@@ -91,25 +111,37 @@ export function ProductCard({ product, market = false }) {
       </CardContent>
       { !market && (
         <center>
-          <CardActions
-            sx={{
-              backgroundColor: '#83B875',
-              alignItems: 'center',
-              display: 'flex',
-              justifyContent: 'center',
-            }}
-          >
+          {
+            (product.price_info || product.price) && (
+              <CardActions
+                sx={{
+                  backgroundColor: '#83B875',
+                  alignItems: 'center',
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
+              >
 
-            <Typography
-              variant="h7"
-              sx={{
-                marginLeft: 1,
-                fontWeight: 'bold',
-              }}
-            >
-              {product.offer_type}
-            </Typography>
-          </CardActions>
+                <Typography
+                  variant="h7"
+                  sx={{
+                    marginLeft: 1,
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {
+                    product.offer_type ? (
+                      product.offer_type
+                    )
+                      : (
+                        t('Bajada de precio')
+                      )
+                  }
+
+                </Typography>
+              </CardActions>
+            )
+          }
         </center>
       )}
     </Card>

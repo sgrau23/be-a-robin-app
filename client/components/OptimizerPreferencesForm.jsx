@@ -110,6 +110,7 @@ function DislikeCard({
             borderRadius: 4,
             boxShadow: 6,
             padding: 1,
+            backgroundColor: 'white',
           }}
         >
           <Box
@@ -143,12 +144,16 @@ function DislikeCard({
   );
 }
 
-export function OptimizerPreferencesForm({ open, handleClose, setOptimizerPreferences }) {
+export function OptimizerPreferencesForm({
+  open, onHandleClose, setOptimizerPreferences, optimizerPreferences, setPurchasePurpose,
+}) {
   const { t } = useTranslation();
   // const [optimizerPreferences, setOptimizerPreferences] = useState(Meteor.user().optimizerPreferences);
-  const [selectedDiet, setSelectedDiet] = useState('no_preferences');
+  const [selectedDiet, setSelectedDiet] = useState((optimizerPreferences === undefined ? 'no_preferences' : optimizerPreferences.diet));
   const [activeStep, setActiveStep] = React.useState(0);
-  const [dislikes, setDislikes] = React.useState([]);
+  const [dislikes, setDislikes] = React.useState(
+    (optimizerPreferences === undefined ? [] : optimizerPreferences.dislikes),
+  );
   const history = useHistory();
   const classes = useStyles();
 
@@ -157,14 +162,21 @@ export function OptimizerPreferencesForm({ open, handleClose, setOptimizerPrefer
     //   if (error) console.log(error);
     //   else setTotalLastMinuteProducts(result);
     // });
-  }, []);
+
+    if (activeStep === 1 && optimizerPreferences.dislikes.length > 0) {
+      optimizerPreferences.dislikes.forEach((element) => {
+        $(`#${element}`).addClass(classes.selectedDislike);
+      });
+    }
+  }, [activeStep]);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
   const handleBack = () => {
-    if (activeStep === 0) history.push(getPreviousPath(history.location.pathname));
+    if (activeStep === 0 && optimizerPreferences) onHandleClose();
+    else if (activeStep === 0 && !optimizerPreferences) history.push(getPreviousPath(history.location.pathname));
     else setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
@@ -198,9 +210,10 @@ export function OptimizerPreferencesForm({ open, handleClose, setOptimizerPrefer
     ),
   );
 
-  const optimizePurchase = (optimizerPreferences) => {
-    Meteor.call('purchaseOptimizer.optimize', optimizerPreferences, Meteor.user()._id, (error) => {
+  const optimizePurchase = (preferences) => {
+    Meteor.call('purchaseOptimizer.optimize', preferences, Meteor.user()._id, (error, result) => {
       if (error) console.log(error);
+      else setPurchasePurpose(result);
     });
   };
 
@@ -211,22 +224,30 @@ export function OptimizerPreferencesForm({ open, handleClose, setOptimizerPrefer
   };
 
   const handleOptimizePurchase = () => {
-    const optimizerPreferences = {
+    const preferences = {
       dislikes,
       diet: selectedDiet,
     };
+    setPurchasePurpose(undefined);
     storePurchaseOptimizerPreferences();
-    optimizePurchase(optimizerPreferences);
-    setOptimizerPreferences(optimizerPreferences);
-    // handleClose();
+    optimizePurchase(preferences);
+    setOptimizerPreferences(preferences);
+    setActiveStep(0);
+    onHandleClose();
   };
 
   return (
     <Dialog
       fullScreen
       open={open}
-      onClose={handleClose}
+      // onClose={handleClose}
       TransitionComponent={Transition}
+      PaperProps={{
+        style: {
+          backgroundColor: '#e6e6e6',
+          boxShadow: 'none',
+        },
+      }}
     >
       <AppBar sx={{ position: 'relative', backgroundColor: 'transparent', boxShadow: 0 }}>
         <Toolbar>
@@ -238,6 +259,9 @@ export function OptimizerPreferencesForm({ open, handleClose, setOptimizerPrefer
             steps={2}
             position="static"
             activeStep={activeStep}
+            sx={{
+              backgroundColor: '#e6e6e6',
+            }}
           />
         </Toolbar>
       </AppBar>

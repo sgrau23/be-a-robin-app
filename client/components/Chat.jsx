@@ -88,6 +88,12 @@ export function Chat() {
         open={open}
         onClose={() => setOpen(false)}
         // TransitionComponent={Transition}
+        PaperProps={{
+          style: {
+            backgroundColor: '#e6e6e6',
+            boxShadow: 'none',
+          },
+        }}
       >
         <AppBar sx={{ position: 'relative' }}>
           <Toolbar>
@@ -106,7 +112,7 @@ export function Chat() {
 
           </Toolbar>
         </AppBar>
-        <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+        <List sx={{ width: '100%' }}>
           {
             (conversations.length !== 0) && (
 
@@ -152,6 +158,12 @@ export function Chat() {
               <Dialog
                 open={openNewChatModal}
                 // TransitionComponent={Transition}
+                PaperProps={{
+                  style: {
+                    backgroundColor: '#e6e6e6',
+                    boxShadow: 'none',
+                  },
+                }}
                 keepMounted
               >
                 <DialogTitle>
