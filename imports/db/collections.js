@@ -14,3 +14,5 @@ export const ChatConversationsCollection = new Mongo.Collection('chatConversatio
 export const ChatConversationsMessagesCollection = new Mongo.Collection('chatConversationsMessages');
 // OPTIMIZED PURCHASES
 export const OptimizedPurchaseCollection = new Mongo.Collection('optimizedPurchase');
+// SHOPPING CART
+export const ShoppingCartCollection = new Mongo.Collection('shoppingCart');

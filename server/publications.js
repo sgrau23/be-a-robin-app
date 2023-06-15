@@ -10,6 +10,7 @@ import {
   MarketsHistoricalLastMinuteProductsCollection,
   ChatConversationsCollection,
   ChatConversationsMessagesCollection,
+  ShoppingCartCollection,
 } from '../imports/db/collections';
 
 // Publish user data
@@ -137,6 +138,16 @@ Meteor.publish('chatConversationMessages', function ChatConversationMessages(cha
   if (this.userId) {
     return ChatConversationsMessagesCollection.find({
       chatId,
+    });
+  }
+  this.ready();
+});
+
+Meteor.publish('shoppingCart', function ShoppingCart(userId) {
+  check(userId, String);
+  if (this.userId) {
+    return ShoppingCartCollection.find({
+      userId,
     });
   }
   this.ready();

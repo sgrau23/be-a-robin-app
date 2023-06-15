@@ -1,13 +1,16 @@
-import * as React from 'react';
+import React, { useState } from 'react';
+import { useTracker } from 'meteor/react-meteor-data';
 import { useTranslation } from 'react-i18next';
 import {
-  AppBar, Grid,
+  AppBar, Grid, Badge,
 } from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import {
   Link,
 } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { ShoppingCartCollection } from '../../imports/db/collections';
 
 // const StyledFooter = styled.div`
 //   width: 100%;
@@ -20,8 +23,14 @@ import HomeIcon from '@mui/icons-material/Home';
 // `;
 
 export function CustomerFooterNavbar() {
+  const [totalProductsCart, setTotalProductsCart] = useState(0);
   // Translations
   const t = useTranslation();
+  useTracker(() => {
+    const handler = Meteor.subscribe('shoppingCart', Meteor.user()._id);
+    if (!handler.ready()) setTotalProductsCart(0);
+    else setTotalProductsCart(ShoppingCartCollection.find().fetch().length);
+  }, []);
   return (
     <AppBar
       sx={{
@@ -51,12 +60,14 @@ export function CustomerFooterNavbar() {
               <HomeIcon fontSize="large" color="secondary" />
             </Link>
           </Grid>
-          {/* <Grid item xs={2} sm={2} md={2} lg={2}>
+          <Grid item xs={2} sm={2} md={2} lg={2}>
             <Link to="/">
-              <HomeIcon fontSize="large" color="secondary" />
+              <Badge badgeContent={totalProductsCart} color="error">
+                <ShoppingCartIcon fontSize="large" color="secondary" />
+              </Badge>
             </Link>
           </Grid>
-          <Grid item xs={2} sm={2} md={2} lg={2}>
+          {/* <Grid item xs={2} sm={2} md={2} lg={2}>
             <Link to="/">
               <HomeIcon fontSize="large" color="secondary" />
             </Link>

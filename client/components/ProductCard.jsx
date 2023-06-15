@@ -5,6 +5,7 @@ import {
 } from '@mui/material';
 // import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { CardImage } from './CardImage';
 import { mainTheme } from '../styles/theme';
 
@@ -20,6 +21,22 @@ export function ProductCard({ product, market = false, marketName = '' }) {
         // height: '50%',
       }}
     >
+      {
+        !market && (
+          <AddShoppingCartIcon
+            color="primary"
+            style={{
+              cursor: 'pointer',
+              float: 'right',
+              marginTop: '5px',
+              width: '30px',
+              marginRight: 5,
+            }}
+            // onClick={() => setOpenNewChatModal(false)}
+          />
+        )
+      }
+
       <CardMedia>
         <CardImage url={product.image} />
       </CardMedia>
@@ -39,9 +56,34 @@ export function ProductCard({ product, market = false, marketName = '' }) {
           >
 
             <Grid item xs={12} sm={12} md={12} lg={12}>
-              <Typography variant="h7">
-                {product.name}
-              </Typography>
+              {
+                (marketName !== '') ? (
+                  <>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {product.name}
+                    </Typography>
+                    <Typography
+                      // variant="h8"
+                      sx={{
+                        fontStyle: 'italic',
+                        fontSize: 12,
+                      }}
+                    >
+                      {marketName}
+                    </Typography>
+                  </>
+                ) : (
+                  <Typography variant="h7">
+                    {product.name}
+                  </Typography>
+                )
+              }
+
             </Grid>
 
             <Grid item xs={12} sm={12} md={12} lg={12}>

@@ -225,12 +225,12 @@ export function Chat() {
                             required
                           >
                             {(
-                        markets.map((market) => (
-                          <MenuItem value={`${market.profile.attributes.marketName}_${market._id}`} id={market._id} key={market._id}>
-                            {market.profile.attributes.marketName}
-                          </MenuItem>
-                        ))
-                    )}
+                                markets.map((market) => (
+                                  <MenuItem value={`${market.profile.attributes.marketName}_${market._id}`} id={market._id} key={market._id}>
+                                    {market.profile.attributes.marketName}
+                                  </MenuItem>
+                                ))
+                            )}
                           </Select>
                         </FormControl>
                       </Grid>

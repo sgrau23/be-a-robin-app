@@ -55,6 +55,7 @@ export function OptimizerPurchaseList({
   const [page, setPage] = useState(0);
   const [visibleProducts, setVisibleProducts] = useState([]);
 
+  // Initialize products
   useEffect(() => {
     const components = [];
     Object.entries(purpose.purpose).forEach((element) => {
@@ -70,6 +71,7 @@ export function OptimizerPurchaseList({
     setProducts(components);
   }, []);
 
+  // Make visible only products related with current page
   useEffect(() => {
     setVisibleProducts(products.slice(
       page * productsPerPage,
@@ -77,6 +79,7 @@ export function OptimizerPurchaseList({
     ));
   }, [products]);
 
+  // Optimize purchase
   const optimizePurchase = () => {
     setPurchasePurpose(undefined);
     Meteor.call('purchaseOptimizer.optimize', optimizerPreferences, Meteor.user()._id, (error, result) => {
@@ -85,25 +88,47 @@ export function OptimizerPurchaseList({
     });
   };
 
+  // Handle markets filter
   const onHandleMarketsFilter = (event) => {
+    let filter = [];
     const {
       target: { value },
     } = event;
-    if (value.includes('Todos')) setMarketsFilter(purpose.involvedMarkets);
-    else setMarketsFilter(typeof value === 'string' ? value.split(',') : value);
+    if (value.includes('Todos')) {
+      setMarketsFilter(purpose.involvedMarkets);
+      filter = purpose.involvedMarkets;
+    } else {
+      filter = typeof value === 'string' ? value.split(',') : value;
+      setMarketsFilter(filter);
+    }
+    // Apply filter on data
+    const components = [];
+    Object.entries(purpose.purpose).forEach((element) => {
+      if (filter.includes(element[1].marketName)) {
+        element[1].products.forEach((item) => {
+          components.push(
+            {
+              component: <ProductCard product={item} marketName={element[1].marketName} />,
+              key: item.name,
+            },
+          );
+        });
+      }
+    });
+    setProducts(components);
+    setPage(0);
   };
 
+  // Manage page changing
   useEffect(() => {
     setVisibleProducts(products.slice(
       page * productsPerPage,
       page * productsPerPage + productsPerPage,
     ));
   }, [page, productsPerPage]);
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-
   const handleChangeProductsPerPage = (event) => {
     setProductsPerPage(parseInt(event.target.value, 10));
     setPage(0);
