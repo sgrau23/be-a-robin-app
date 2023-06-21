@@ -8,7 +8,7 @@ import {
   MarketsLastMinuteProductsTemporalCollection,
   MarketsLastMinuteProductsCollection, MarketsHistoricalLastMinuteProductsCollection,
   ChatConversationsCollection, ChatConversationsMessagesCollection,
-  OptimizedPurchaseCollection,
+  OptimizedPurchaseCollection, ShoppingCartCollection,
 } from '../imports/db/collections';
 import { getProductProposal } from './inuba';
 
@@ -307,5 +307,42 @@ Meteor.methods({
     const purpose = OptimizedPurchaseCollection.find({ _id }).fetch();
     if (purpose.length > 0) return purpose[0];
     return {};
+  },
+  'shoppingCart.addProduct': (product, userId, marketName) => {
+    check(product, Object);
+    check(userId, String);
+    check(marketName, String);
+    ShoppingCartCollection.update(
+      {
+        userId,
+        marketName,
+        name: product.name,
+      },
+      { $set: { product } },
+      { upsert: true },
+    );
+  },
+  'shoppingCart.getAll': (userId) => {
+    check(userId, String);
+    return ShoppingCartCollection.find({ userId }).fetch();
+  },
+  'shoppingCart.changeStatus': (userId, product, disabled) => {
+    check(product, Object);
+    check(userId, String);
+    check(disabled, Boolean);
+    return ShoppingCartCollection.update(
+      {
+        userId,
+        marketName: product.marketName,
+        name: product.name,
+      },
+      {
+        $set: { disabled },
+      },
+    );
+  },
+  'shoppingCart.deleteUserProducts': (userId) => {
+    check(userId, String);
+    return ShoppingCartCollection.remove({ userId });
   },
 });

@@ -61,7 +61,7 @@ export function CustomerFooterNavbar() {
             </Link>
           </Grid>
           <Grid item xs={2} sm={2} md={2} lg={2}>
-            <Link to="/">
+            <Link to="/shoppingCart">
               <Badge badgeContent={totalProductsCart} color="error">
                 <ShoppingCartIcon fontSize="large" color="secondary" />
               </Badge>

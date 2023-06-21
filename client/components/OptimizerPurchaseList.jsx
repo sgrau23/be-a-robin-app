@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { makeStyles } from '@material-ui/core';
 import {
   TablePagination, AppBar, Box, Backdrop, CircularProgress, FormControl,
-  InputLabel, Select, MenuItem, Chip, Typography, Divider, Grid,
+  InputLabel, Select, MenuItem, Chip, Typography, Divider, Grid, Toolbar,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import SyncIcon from '@mui/icons-material/Sync';
@@ -126,9 +126,11 @@ export function OptimizerPurchaseList({
       page * productsPerPage + productsPerPage,
     ));
   }, [page, productsPerPage]);
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
+
   const handleChangeProductsPerPage = (event) => {
     setProductsPerPage(parseInt(event.target.value, 10));
     setPage(0);
@@ -223,7 +225,6 @@ export function OptimizerPurchaseList({
             </Grid>
           </Grid>
         </Grid>
-
       </AppBar>
       <Divider color="primary" sx={{ marginTop: 3 }} />
       <Box

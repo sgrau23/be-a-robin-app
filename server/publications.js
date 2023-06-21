@@ -40,7 +40,7 @@ Meteor.publish('supermarketProducts', function SupermarketProducts(key, postalCo
   check(postalCode, Number);
   if (this.userId) {
     return SupermarketProductsCollection.find({
-      supermarket_key: key, postal_code: { $in: [postalCode, undefined] },
+      marketName: key, postal_code: { $in: [postalCode, undefined] },
     });
   }
   this.ready();

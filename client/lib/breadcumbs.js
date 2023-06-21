@@ -12,4 +12,5 @@ export const breadcumbsMapping = {
   '/purchaseOptimizer': 'Optimizador Compra',
   '/supermarkets': 'Supermercados',
   '/marketsLastMinute': 'Last Minute',
+  '/shoppingCart': 'Lista de la compra',
 };

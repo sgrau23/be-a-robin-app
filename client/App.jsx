@@ -35,6 +35,7 @@ import { mainTheme } from './styles/theme';
 
 import { Chat } from './components/Chat';
 import { PurchaseOptimizer } from './pages/customer/PurchaseOptimizer';
+import { ShoppingCart } from './pages/customer/ShoppingCart';
 
 const MainContainer = styled.div`
   min-height: 100vh;
@@ -90,6 +91,8 @@ export function App() {
                         {
                           userType === 'cliente' && (
                             <>
+                              <PropsRoute exact path="/shoppingCart" component={ShoppingCart} />
+
                               <PropsRoute exact path="/marketsOffers" component={Markets} />
                               <PropsRoute exact path="/marketsOffers/:id" component={MarketProducts} />
 

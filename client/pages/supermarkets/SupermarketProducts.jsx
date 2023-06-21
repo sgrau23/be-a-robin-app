@@ -76,7 +76,7 @@ export function SupermarketProducts() {
       </Backdrop>
       {
         (visibleProducts.length === 0) && !loading && (
-          <Alert severity="success">{t('No hay productos en oferta para este supermercado.')}</Alert>
+          <Alert severity="info" color="primary">{t('No hay productos en oferta para este supermercado.')}</Alert>
         )
       }
       {

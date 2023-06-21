@@ -39,10 +39,10 @@ export function DashboardCard({
           >
             {t(contentText)}
             {
-              (notifications !== 0) && (
-                <Badge badgeContent={notifications} color="error" sx={{ marginLeft: 3 }} />
-              )
-            }
+               (notifications !== 0) && (
+                 <Badge badgeContent={notifications} color="error" sx={{ marginLeft: 3 }} />
+               )
+             }
           </Typography>
         </CardContent>
         <CardActions
@@ -70,4 +70,38 @@ export function DashboardCard({
     </Box>
 
   );
+  // return (
+  //   <Box
+  //     component={Link}
+  //     to={route}
+  //   >
+  //     <Box
+  //       // id={id}
+  //       component="img"
+  //       sx={{
+  //         width: '100%',
+  //         height: '100%',
+  //         borderRadius: 4,
+  //         boxShadow: 6,
+  //         // opacity: 0.7,
+  //       }}
+  //       alt=""
+  //       src={logo}
+  //     />
+  //     {/* <div
+  //       style={{
+  //         position: 'absolute',
+  //         bottom: '5%',
+  //         left: '20%',
+  //       }}
+  //     >
+  //       <Typography
+  //         variant="h6"
+  //         sx={{ fontWeight: 'bold', opacity: 1 }}
+  //       >
+  //         {cardMessage}
+  //       </Typography>
+  //     </div> */}
+  //   </Box>
+  // );
 }

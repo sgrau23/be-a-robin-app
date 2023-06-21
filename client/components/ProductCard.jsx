@@ -11,6 +11,18 @@ import { mainTheme } from '../styles/theme';
 
 export function ProductCard({ product, market = false, marketName = '' }) {
   const { t } = useTranslation();
+
+  const addProductShoppingCart = () => {
+    Meteor.call(
+      'shoppingCart.addProduct',
+      product,
+      Meteor.user()._id,
+      (product.marketName ? product.marketName : marketName),
+      (error) => {
+        if (error) console.log(error);
+      });
+  };
+
   return (
     <Card
       sx={{
@@ -21,21 +33,18 @@ export function ProductCard({ product, market = false, marketName = '' }) {
         // height: '50%',
       }}
     >
-      {
-        !market && (
-          <AddShoppingCartIcon
-            color="primary"
-            style={{
-              cursor: 'pointer',
-              float: 'right',
-              marginTop: '5px',
-              width: '30px',
-              marginRight: 5,
-            }}
-            // onClick={() => setOpenNewChatModal(false)}
-          />
-        )
-      }
+
+      <AddShoppingCartIcon
+        color="primary"
+        style={{
+          cursor: 'pointer',
+          float: 'right',
+          marginTop: '5px',
+          width: '30px',
+          marginRight: 5,
+        }}
+        onClick={addProductShoppingCart}
+      />
 
       <CardMedia>
         <CardImage url={product.image} />

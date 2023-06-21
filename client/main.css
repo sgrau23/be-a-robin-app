@@ -4,9 +4,9 @@
   --menuColor:  hsl(0, 0%, 100%);
 }
 
-.generalPadding {
-  /* padding: 10px; */
-}
+/* .generalPadding {
+  padding: 10px;
+} */
 
 body {
   font-family: monospace;

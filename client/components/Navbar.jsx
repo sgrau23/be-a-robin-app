@@ -47,7 +47,7 @@ export function Navbar() {
   };
 
   return (
-    <AppBar sx={{ backgroundColor: 'transparent', boxShadow: 0 }}>
+    <AppBar sx={{ backgroundColor: '#e6e6e6', boxShadow: 0 }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {
