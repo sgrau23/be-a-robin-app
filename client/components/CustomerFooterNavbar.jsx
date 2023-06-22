@@ -10,6 +10,10 @@ import {
 } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import RecyclingIcon from '@mui/icons-material/Recycling';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import StorefrontIcon from '@mui/icons-material/Storefront';
 import { ShoppingCartCollection } from '../../imports/db/collections';
 
 // const StyledFooter = styled.div`
@@ -31,6 +35,7 @@ export function CustomerFooterNavbar() {
     if (!handler.ready()) setTotalProductsCart(0);
     else setTotalProductsCart(ShoppingCartCollection.find().fetch().length);
   }, []);
+
   return (
     <AppBar
       sx={{
@@ -55,16 +60,29 @@ export function CustomerFooterNavbar() {
           }}
           justifyContent="center"
         >
-          <Grid item xs={2} sm={2} md={2} lg={2} sx={{ marginLeft: 5 }}>
+          <Grid item xs={2} sm={2} md={2} lg={2} sx={{ marginLeft: 1 }}>
             <Link to="/">
               <HomeIcon fontSize="large" color="secondary" />
             </Link>
           </Grid>
           <Grid item xs={2} sm={2} md={2} lg={2}>
-            <Link to="/shoppingCart">
-              <Badge badgeContent={totalProductsCart} color="error">
-                <ShoppingCartIcon fontSize="large" color="secondary" />
-              </Badge>
+            <Link to="/supermarkets">
+              <StorefrontIcon fontSize="large" color="secondary" />
+            </Link>
+          </Grid>
+          <Grid item xs={2} sm={2} md={2} lg={2}>
+            <Link to="/marketsOffers">
+              <LocalOfferIcon fontSize="large" color="secondary" />
+            </Link>
+          </Grid>
+          <Grid item xs={2} sm={2} md={2} lg={2}>
+            <Link to="/purchaseOptimizer">
+              <ReceiptIcon fontSize="large" color="secondary" />
+            </Link>
+          </Grid>
+          <Grid item xs={2} sm={2} md={2} lg={2}>
+            <Link to="/echoShop">
+              <RecyclingIcon fontSize="large" color="secondary" />
             </Link>
           </Grid>
           {/* <Grid item xs={2} sm={2} md={2} lg={2}>

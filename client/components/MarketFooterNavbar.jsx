@@ -67,8 +67,8 @@ export function MarketFooterNavbar() {
             </Link>
           </Grid>
           <Grid item xs={2} sm={2} md={2} lg={2}>
-            <Link to="/offers">
-              <LocalGroceryStoreIcon fontSize="large" color="secondary" />
+            <Link to="/marketsOffers">
+              <LocalOfferIcon fontSize="large" color="secondary" />
             </Link>
           </Grid>
           <Grid item xs={2} sm={2} md={2} lg={2}>

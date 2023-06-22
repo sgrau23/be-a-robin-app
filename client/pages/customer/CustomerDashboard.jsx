@@ -16,23 +16,23 @@ export function CustomerDashboard() {
 
   const items = [
     {
-      component: <DashboardCard logo="" contentText={t('Rastreador de ofertas en supermercados')} route="/supermarkets" />,
+      component: <DashboardCard logo="secos-offers.png" contentText={t('Rastreador de ofertas en supermercados')} route="/supermarkets" />,
       key: 'rastreator',
     },
     {
-      component: <DashboardCard logo="" contentText={t('Rastreador de ofertas en comercios de proximidad')} route="/marketsOffers" />,
+      component: <DashboardCard logo="frescos-offers.jpeg" contentText={t('Rastreador de ofertas en comercios de proximidad')} route="/marketsOffers" />,
       key: 'marketRastreator',
     },
     {
-      component: <DashboardCard logo="" contentText={t('Optmiza tu compra')} route="/purchaseOptimizer" />,
+      component: <DashboardCard logo="compra.jpeg" contentText={t('Optmiza tu compra')} route="/purchaseOptimizer" />,
       key: 'compra',
     },
     {
-      component: <DashboardCard logo="" contentText={t('Tienda ECO')} route="/echoshop" />,
+      component: <DashboardCard logo="tienda-eco.jpeg" contentText={t('Tienda ECO')} route="/echoshop" />,
       key: 'eco',
     },
     {
-      component: <DashboardCard logo="" contentText={t('Last Minute')} route="/marketsLastMinute" notifications={totalLastMinuteProducts} />,
+      component: <DashboardCard logo="lastminute.jpeg" contentText={t('Last Minute')} route="/marketsLastMinute" notifications={totalLastMinuteProducts} />,
       key: 'lastminute',
     },
   ];

@@ -9,11 +9,11 @@ export function MarketDashboard() {
   const { t } = useTranslation();
   const items = [
     {
-      component: <DashboardCard logo="" contentText={t('Ofertas')} route="/offers" />,
+      component: <DashboardCard logo="frescos-offers.jpeg" contentText={t('Ofertas')} route="/offers" />,
       key: 'offers',
     },
     {
-      component: <DashboardCard logo="" contentText={t('Last Minute')} route="/lastminute" />,
+      component: <DashboardCard logo="lastminute.jpeg" contentText={t('Last Minute')} route="/lastminute" />,
       key: 'lastminute',
     },
   ];

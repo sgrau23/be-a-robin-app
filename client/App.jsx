@@ -68,7 +68,7 @@ export function App() {
               ? (
                 <>
                   <PropsRoute component={Navbar} />
-                  <div className="generalPadding">
+                  <div style={{ marginTop: '7%' }}>
                     <Body>
                       <Switch>
                         {

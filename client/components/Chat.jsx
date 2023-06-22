@@ -78,6 +78,8 @@ export function Chat() {
           right: 5,
           left: 'auto',
           position: 'fixed',
+          height: '50px',
+          width: '50px',
         }}
         onClick={() => setOpen(true)}
       >

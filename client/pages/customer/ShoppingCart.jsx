@@ -3,7 +3,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useTranslation } from 'react-i18next';
 import {
   List, ListItem, Checkbox, DialogTitle, DialogContentText,
-  DialogContent, DialogActions, Dialog, Button,
+  DialogContent, DialogActions, Dialog, Button, Fab,
   Divider, Typography, Grid, Alert, Box, IconButton,
 } from '@mui/material';
 import $ from 'jquery';
@@ -81,13 +81,26 @@ export function ShoppingCart() {
       {
         products.length !== 0 && (
           <>
+            <Fab
+              color="grey"
+              style={{
+                bottom: 70,
+                left: 10,
+                right: 'auto',
+                position: 'fixed',
+                height: '50px',
+                width: '50px',
+              }}
+              onClick={() => setOpenDeleteConfirmationDialog(true)}
+            >
+              <DeleteIcon color="error" />
+            </Fab>
             <Box
               sx={{
                 marginBottom: 2,
               }}
             >
-
-              <IconButton
+              {/* <IconButton
                 // variant="contained"
                 color="error"
                 // size="large"
@@ -99,7 +112,7 @@ export function ShoppingCart() {
                 onClick={() => { setOpenDeleteConfirmationDialog(true); }}
               >
                 <DeleteIcon />
-              </IconButton>
+              </IconButton> */}
               <Dialog
                 open={openDeleteConfirmationDialog}
                 aria-labelledby="alert-dialog-title"

@@ -1,5 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Box } from '@mui/material';
+import {
+  Link,
+} from 'react-router-dom';
 import { ResponsiveGrid } from '../../../components/ResponsiveGrid';
 import { DashboardCard } from '../../../components/DashboardCard';
 
@@ -15,7 +19,7 @@ export function Offers() {
       key: 'manage_offers',
     },
     {
-      component: <DashboardCard logo="" contentText={t('Histórico de ofertas')} route="/offers/historical" />,
+      component: <DashboardCard logo="historical.png" contentText={t('Histórico de ofertas')} route="/offers/historical" />,
       key: 'historical_offers',
     },
   ];
