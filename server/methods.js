@@ -70,8 +70,7 @@ Meteor.methods({
     check(userTypeData, Object);
     // User creation
     const result = await createUser(userData, userCommonData, userTypeData);
-    if (result.status === 400) throw new Meteor.Error(result.message);
-    return true;
+    return result;
   },
   'products.categories': () => {
     const categories = [];

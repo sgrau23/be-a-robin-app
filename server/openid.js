@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import jwtDecode from 'jwt-decode';
 import Future from 'fibers/future';
 import fetch from 'node-fetch';
+import { UsersTemporalPhotoCollection } from '../imports/db/collections';
 
 const service = 'openid';
 const {
@@ -40,7 +41,10 @@ export const createUser = (userData, userCommonData, userTypeData) => {
   const future = new Future();
   const accessToken = getAccessToken();
   const attributes = fillAttributes(userData, userCommonData, userTypeData);
+  const { image } = attributes;
+  delete attributes.image;
 
+  // console.log(typeof attributes.image);
   // Define body
   const body = {
     createdTimestamp: new Date().getTime(),
@@ -73,7 +77,6 @@ export const createUser = (userData, userCommonData, userTypeData) => {
     .then((r) => future.return(r))
     .catch((error) => { console.error(error); future.return(); });
   const response = future.wait();
-  console.log(response);
   // Prepare output response
   const result = {
     message: 'El usuario ha sido creado',
@@ -82,6 +85,11 @@ export const createUser = (userData, userCommonData, userTypeData) => {
   if (response && 'errorMessage' in response) {
     result.message = response.errorMessage;
     result.status = 400;
+  } else {
+    UsersTemporalPhotoCollection.insert({
+      email: userData.email,
+      image,
+    });
   }
   return result;
 };
@@ -143,8 +151,9 @@ Accounts.registerLoginHandler(service, (options) => {
   // Decode JWT token
   const accessTokenInfo = jwtDecode(response.access_token);
   // Check user preferences
-  console.log(accessTokenInfo.sid);
+
   const user = Meteor.users.find({ 'profile.email': accessTokenInfo.email }).fetch();
+  const userPhoto = UsersTemporalPhotoCollection.find({ email: accessTokenInfo.email }).fetch();
   // Update or create user account
   const uid = Accounts.updateOrCreateUserFromExternalService(
     this.service,
@@ -163,6 +172,7 @@ Accounts.registerLoginHandler(service, (options) => {
         family_name: accessTokenInfo.family_name,
         email: accessTokenInfo.email,
         purchaseOptimizerPreferences: (user.length === 0 ? undefined : user[0].profile.purchaseOptimizerPreferences),
+        image: userPhoto[0].image,
         savings: {
           currentMonthsavings: 0,
           currentMonthPotentialSavings: 0,

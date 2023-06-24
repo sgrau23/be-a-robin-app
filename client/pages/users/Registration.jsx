@@ -4,13 +4,17 @@ import {
   Backdrop, Grid, Divider, CircularProgress, FormControl, Box,
   FormLabel, Avatar, Link, InputAdornment, IconButton, FormControlLabel, RadioGroup,
   Radio, InputLabel, Select, MenuItem, Alert, DialogTitle, DialogContentText,
-  DialogContent, DialogActions, Dialog, Button, Chip,
+  DialogContent, DialogActions, Dialog, Button, Chip, Fab, Checkbox, FormGroup,
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { Link as RouteLink } from 'react-router-dom';
+import {
+  Link as RouteLink,
+  useHistory,
+} from 'react-router-dom';
 import { Typography } from '@material-ui/core';
 import { useTheme } from '@mui/material/styles';
+import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded';
 import {
   WhiteTypography, TextInput, RoundedButton, GreenTypography,
 } from '../../styles/styledComponents';
@@ -36,6 +40,7 @@ function getStyles(name, personName, theme) {
 }
 
 export function Registration() {
+  const history = useHistory();
   const theme = useTheme();
   // Translations
   const { t } = useTranslation();
@@ -45,8 +50,6 @@ export function Registration() {
   const onHandleCloseConfirmationDialog = () => {
     setOpenConfirmationDialog(false);
   };
-  // Get all diets
-  const { diets } = Meteor.settings.public;
   // User data variables
   const [userData, setUserData] = useState({
     username: '',
@@ -93,7 +96,9 @@ export function Registration() {
   // Market user  data
   const [marketData, setMarketData] = useState({
     marketName: '',
-    marketCategories: [],
+    categories: [],
+    image: undefined,
+    eco: 'no',
   });
   const onHandleMarketData = (e) => {
     setMarketData({ ...marketData, [e.target.name]: e.target.value });
@@ -102,34 +107,49 @@ export function Registration() {
     const {
       target: { value },
     } = event;
-    marketData.marketCategories = (typeof value === 'string' ? value.split(',') : value);
+    marketData.categories = (typeof value === 'string' ? value.split(',') : value);
+  };
+
+  const onHandleEco = (event) => {
+    marketData.eco = (event.target.checked ? 'yes' : 'no');
   };
   // Loading page
   const [loading, setLoading] = useState(false);
   // Submit new account
   const onHandleSubmit = (e) => {
+    e.preventDefault();
     setLoading(true);
-    if (userData.pass !== userData.pass2) {
-      e.preventDefault();
-      return false;
-    }
-    marketData.marketCategories = marketData.marketCategories.join(',');
+    if (userData.pass !== userData.pass2) return false;
+    marketData.marketCategories = marketData.categories.join(',');
     Meteor.call(
       'users.createUser',
       userData,
       userCommonData,
       (userData.userType === 'comercio' ? marketData : customerData),
-      (error) => {
+      (error, result) => {
         if (error) {
           setRegistrationError(error.error);
-          e.preventDefault();
+          return false;
+        }
+
+        if (result.status === 400) {
+          setRegistrationError(result.message);
           return false;
         }
         setRegistrationError('');
-        // return true;
+        history.push('/');
+        return true;
       });
     setLoading(false);
-    // return true;
+  };
+
+  const onHandleUploadClick = (e) => {
+    const reader = new FileReader();
+    const file = e.target.files[0];
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      setMarketData({ ...marketData, image: reader.result });
+    };
   };
 
   return (
@@ -450,6 +470,18 @@ export function Registration() {
                   {t(`Datos cuenta ${userData.userType}:`)}
                 </WhiteTypography>
               </Grid>
+
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                md={12}
+                lg={12}
+              >
+                <FormGroup>
+                  <FormControlLabel control={<Checkbox onClick={onHandleEco} />} label={t('Ecológico')} />
+                </FormGroup>
+              </Grid>
               <Grid
                 item
                 xs={12}
@@ -458,14 +490,14 @@ export function Registration() {
                 lg={12}
               >
                 <FormControl fullWidth>
-                  <InputLabel id="category-select-label">{t('Categorías Mercado')}</InputLabel>
+                  <InputLabel id="category-select-label">{t('Categorías comercio')}</InputLabel>
                   <Select
                     labelId="category-select-label"
                     multiple
-                    value={marketData.marketCategories}
-                    label={t('Categorías Mercado')}
+                    value={marketData.categories}
+                    label={t('Categorías comercio')}
                     onChange={onHandleCategories}
-                    name="marketCategories"
+                    name="categories"
                     variant="filled"
                     renderValue={(selected) => (
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
@@ -482,7 +514,7 @@ export function Registration() {
                             id={category.id}
                             value={category.id}
                             key={category.id}
-                            style={getStyles(category.name, marketData.marketCategories, theme)}
+                            style={getStyles(category.name, marketData.categories, theme)}
                           >
                             {t(category.name)}
                           </MenuItem>
@@ -539,6 +571,32 @@ export function Registration() {
                   fullWidth
                   required
                 />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                md={12}
+                lg={12}
+              >
+                <label htmlFor="attach-market-img">
+                  <input
+                    accept="image/*"
+                    id="attach-market-img"
+                    type="file"
+                    required
+                    onChange={onHandleUploadClick}
+                    style={{
+                      display: 'none',
+                    }}
+                  />
+                  <Fab component="span">
+                    <AddPhotoAlternateRoundedIcon />
+                  </Fab>
+                  {' '}
+                  *
+                </label>
+
               </Grid>
             </Grid>
           </>

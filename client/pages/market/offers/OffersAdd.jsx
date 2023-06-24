@@ -28,8 +28,6 @@ require('dayjs/locale/es');
 
 dayjs.locale('es');
 
-console.log(esES.components.MuiLocalizationProvider.defaultProps.localeText);
-
 const defaultProductData = {
   name: '',
   category_id: '',
@@ -105,7 +103,7 @@ export function OffersAdd() {
       'products.createTemporalOffer',
       data,
       Meteor.user().profile.attributes.marketName,
-      (error, result) => {
+      (error) => {
         if (error) setAddError(true);
         else {
           setOpenAddModal(false);
@@ -121,11 +119,9 @@ export function OffersAdd() {
       Meteor.call(
         'products.submitOffers',
         offers,
-        (error, result) => {
+        (error) => {
           if (error) console.log('error');
-          else {
-            setSuccess(true);
-          }
+          else setSuccess(true);
         });
     }
   };
