@@ -1,62 +1,73 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Grid, Typography, Box, Avatar,
 } from '@mui/material';
+import { ProductDetails } from './ProductDetails';
 
 export function ProductCard({ product }) {
   const { t } = useTranslation();
   const { categoriesMapping } = Meteor.settings.public;
+  const [openDetails, setOpenDetails] = useState(false);
+
+  const onHandleClose = () => {
+    setOpenDetails(false);
+  };
+
+  const onHandleProductClick = () => {
+    setOpenDetails(true);
+  };
 
   return (
-    <Box
-      maxWidth
-      sx={{
-        backgroundColor: 'secondary.main',
-        width: '100%',
-      }}
-      style={{
-        maxWidth: '100%',
-      }}
-    >
+    <>
       <Box
+        maxWidth
         sx={{
-          padding: '8px',
+          backgroundColor: 'secondary.main',
+          width: '100%',
         }}
+        style={{
+          maxWidth: '100%',
+        }}
+        onClick={onHandleProductClick}
       >
-        <Grid
-          container
-          columns={{
-            xs: 12, sm: 12, md: 12, lg: 12,
-          }}
-          spacing={{
-            xs: 0, sm: 0, md: 0, lg: 0,
+        <Box
+          sx={{
+            padding: '8px',
           }}
         >
           <Grid
-            item
-            xs={9}
-            sm={9}
-            md={9}
-            lg={9}
+            container
+            columns={{
+              xs: 12, sm: 12, md: 12, lg: 12,
+            }}
+            spacing={{
+              xs: 0, sm: 0, md: 0, lg: 0,
+            }}
           >
-            <Typography
-              sx={{
-                fontWeight: 'bold',
-              }}
+            <Grid
+              item
+              xs={9}
+              sm={9}
+              md={9}
+              lg={9}
             >
-              {product.name}
-            </Typography>
-            <Typography
-              sx={{
-                fontStyle: 'italic',
-                fontSize: 12,
-              }}
-            >
-              {t(categoriesMapping[product.category_id])}
-            </Typography>
-            {
+              <Typography
+                sx={{
+                  fontWeight: 'bold',
+                }}
+              >
+                {product.name}
+              </Typography>
+              <Typography
+                sx={{
+                  fontStyle: 'italic',
+                  fontSize: 12,
+                }}
+              >
+                {t(categoriesMapping[product.category_id])}
+              </Typography>
+              {
               product.price ? (
                 <Typography
                   sx={{
@@ -107,7 +118,7 @@ export function ProductCard({ product }) {
               )
             }
 
-            {
+              {
               product.expirationDate && (
                 <Typography
                   sx={{
@@ -116,32 +127,39 @@ export function ProductCard({ product }) {
                     color: 'red',
                   }}
                 >
-                  {`${t('Termina el')} ${product.expirationDate}`}
+                  {`${t('Expira el')} ${product.expirationDate}`}
                 </Typography>
               )
             }
 
+            </Grid>
+            <Grid
+              item
+              xs={3}
+              sm={3}
+              md={3}
+              lg={3}
+            >
+              <center>
+                <Avatar
+                  alt=""
+                  src={product.image}
+                  sx={{
+                    height: '100%',
+                    width: '100%',
+                  }}
+                />
+              </center>
+            </Grid>
           </Grid>
-          <Grid
-            item
-            xs={3}
-            sm={3}
-            md={3}
-            lg={3}
-          >
-            <center>
-              <Avatar
-                alt=""
-                src={product.image}
-                sx={{
-                  height: '100%',
-                  width: '100%',
-                }}
-              />
-            </center>
-          </Grid>
-        </Grid>
+        </Box>
       </Box>
-    </Box>
+      <ProductDetails
+        product={product}
+        open={openDetails}
+        onHandleClose={onHandleClose}
+      />
+    </>
+
   );
 }

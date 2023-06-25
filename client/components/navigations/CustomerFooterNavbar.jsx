@@ -37,7 +37,12 @@ export function CustomerFooterNavbar() {
       key="propuesta"
     />,
     <FooterNavIcon
-      iconComponent={<ShoppingBasketIcon fontSize="medium" color="secondary" />}
+      iconComponent={(
+        <>
+          <Badge badgeContent={totalProductsCart} color="error" sx={{ float: 'right' }} />
+          <ShoppingBasketIcon fontSize="medium" color="secondary" />
+        </>
+      )}
       route="/shoppingCart"
       text="Compra"
       key="compra"

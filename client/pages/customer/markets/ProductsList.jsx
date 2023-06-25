@@ -5,7 +5,7 @@ import {
 } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  Grid, Fab, Typography, Box,
+  Grid, Fab, Typography, Box, Alert,
   Backdrop, CircularProgress, Badge,
 } from '@mui/material';
 // import { DashboardCard } from '../../components/DashboardCard';
@@ -21,6 +21,7 @@ import {
 } from '../../../../imports/db/collections';
 import { ProductCard } from '../../../components/products/ProductCard';
 
+// Define tab classes
 const useStyles = makeStyles({
   selected: {
     backgroundColor: '#ffffff',
@@ -35,8 +36,8 @@ export function ProductList() {
   const { id } = useParams();
   const type = useHistory().location.pathname.split('/')[1];
   const [marketData, setMarkeData] = useState();
-  const [products, setProducts] = useState([]);
-  const [lastminuteProducts, setLastminuteProduts] = useState([]);
+  const [products, setProducts] = useState();
+  const [lastminuteProducts, setLastminuteProduts] = useState((type === 'supermarkets') ? [] : undefined);
   const [offerTypeSelected, setOfferTypeSelected] = useState('offer');
   const classes = useStyles();
 
@@ -74,12 +75,11 @@ export function ProductList() {
     let handler;
     if (type === 'supermarkets') handler = Meteor.subscribe('supermarketProducts', id, parseInt(Meteor.user().profile.attributes.postalCode, 10));
     else handler = Meteor.subscribe('marketProducts', id);
-    if (!handler.ready()) setProducts([]);
+    if (!handler.ready()) setProducts();
     else {
       let data;
       if (type === 'supermarkets') data = SupermarketProductsCollection.find().fetch();
       else data = MarketsOfferProductsCollection.find().fetch();
-      console.log(data);
       setProducts(data);
     }
   }, []);
@@ -88,7 +88,7 @@ export function ProductList() {
   useTracker(() => {
     if (type !== 'supermarkets') {
       const handler = Meteor.subscribe('marketLastMinuteProducts', id);
-      if (!handler.ready()) setProducts([]);
+      if (!handler.ready()) setProducts();
       else {
         const data = MarketsLastMinuteProductsCollection.find({ marketName: id }).fetch();
         setLastminuteProduts(data);
@@ -103,6 +103,7 @@ export function ProductList() {
     }
   };
 
+  // Make tab interaction
   useEffect(() => {
     // Remove previous classes
     $('#offerButton').removeClass((offerTypeSelected === 'offer' ? classes.notSelected : classes.selected));
@@ -111,10 +112,6 @@ export function ProductList() {
     $('#offerButton').addClass((offerTypeSelected === 'offer' ? classes.selected : classes.notSelected));
     $('#lastminuteButton').addClass((offerTypeSelected === 'lastminute' ? classes.selected : classes.notSelected));
   }, [offerTypeSelected]);
-
-  //   useEffect(() => {
-  //     console.log(marketTypeSelected);
-  //   }, [marketTypeSelected]);
 
   return (
     <>
@@ -317,7 +314,11 @@ export function ProductList() {
                             margin: '8px',
                           }}
                         >
-                          <Badge badgeContent={lastminuteProducts.length} color="error" sx={{ marginLeft: 3, float: 'right' }} />
+                          <Badge
+                            badgeContent={(lastminuteProducts ? lastminuteProducts.length : 0)}
+                            color="error"
+                            sx={{ marginLeft: 3, float: 'right' }}
+                          />
                           <Box
                             sx={{
                               width: '100%',
@@ -357,23 +358,27 @@ export function ProductList() {
               style={{
                 overflow: 'auto',
                 maxHeight: '100vh',
+                width: '100%',
               }}
             >
               {
-                offerTypeSelected === 'offer' ? (
-                  products.map((product) => (
+                products && offerTypeSelected === 'offer' && (
+                  products.map((product, idx) => (
                     <Grid
                       item
                       xs={12}
                       sm={12}
                       md={12}
                       lg={12}
-                      key={product.name}
+                      key={idx}
                     >
                       <ProductCard product={product} />
                     </Grid>
                   ))
-                ) : (
+                )
+              }
+              {
+                lastminuteProducts && offerTypeSelected === 'lastminute' && (
                   lastminuteProducts.map((lastminuteProduct) => (
                     <Grid
                       item
@@ -401,93 +406,70 @@ export function ProductList() {
             </Box>
 
           </Grid>
+
         )
       }
 
-    </>
-  // <Grid
-  //   item
-  //   xs={12}
-  //   sm={12}
-  //   md={12}
-  //   lg={12}
-  // //   key={market.key}
-  // >
-  //   <Box
-  //     maxWidth
-  //     sx={{
-  //       backgroundColor: 'secondary.main',
-  //       width: '100%',
-  //     }}
-  //     style={{
-  //       maxWidth: '100%',
-  //     }}
-  //   >
-  //     <Box
-  //       sx={{
-  //         padding: '8px',
-  //       }}
-  //     >
-  //       <Grid
-  //         container
-  //         columns={{
-  //           xs: 12, sm: 12, md: 12, lg: 12,
-  //         }}
-  //       >
-  //         <Grid
-  //           item
-  //           xs={12}
-  //           sm={12}
-  //           md={12}
-  //           lg={12}
-  //         >
-  //           <img
-  //             src={data.profile.image}
-  //             alt=""
-  //             style={{
-  //               height: '150px',
-  //               width: '100%',
-  //               borderRadius: 6,
-  //             }}
-  //           />
-  //         </Grid>
-  //         <Grid
-  //           item
-  //           xs={8}
-  //           sm={8}
-  //           md={8}
-  //           lg={8}
-  //         >
-  //           <Typography
-  //             sx={{
-  //               fontWeight: 'bold',
-  //               fontSize: 12,
-  //             }}
-  //           >
-  //             {t(data.profile.attributes.marketName)}
-  //           </Typography>
-  //         </Grid>
-  //         <Grid
-  //           item
-  //           xs={4}
-  //           sm={4}
-  //           md={4}
-  //           lg={4}
-  //         >
-  //           <Typography
-  //             sx={{
-  //               fontStyle: 'italic',
-  //               fontSize: 12,
-  //               textAlign: 'right',
-  //             }}
-  //           >
-  //             {t('a 300 metros')}
-  //           </Typography>
-  //         </Grid>
+      {
+        offerTypeSelected === 'offer' && (
+          <Backdrop
+            sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={!products}
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
+        )
+      }
+      {
+        offerTypeSelected === 'lastminute' && (
+          <Backdrop
+            sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={!lastminuteProducts}
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
 
-  //       </Grid>
-  //     </Box>
-  //   </Box>
-  // </Grid>
+        )
+      }
+      {
+        products && (products.length === 0) && offerTypeSelected === 'offer' && (
+          <Alert
+            severity="info"
+            color="success"
+            sx={{
+              margin: '8px',
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: 12,
+              }}
+            >
+              {t('El establecimiento no tiene ofertas activas.')}
+            </Typography>
+
+          </Alert>
+        )
+      }
+      {
+        lastminuteProducts && (lastminuteProducts.length === 0) && offerTypeSelected === 'lastminute' && (
+          <Alert
+            severity="info"
+            color="success"
+            sx={{
+              margin: '8px',
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: 12,
+              }}
+            >
+              {t('El establecimiento no tiene ofertas last minute activas.')}
+            </Typography>
+          </Alert>
+        )
+      }
+    </>
   );
 }

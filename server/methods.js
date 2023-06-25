@@ -307,10 +307,13 @@ Meteor.methods({
     if (purpose.length > 0) return purpose[0];
     return {};
   },
-  'shoppingCart.addProduct': (product, userId, marketName) => {
+  'shoppingCart.addProduct': (product, quantity, userId, marketName) => {
     check(product, Object);
+    check(quantity, Number);
     check(userId, String);
     check(marketName, String);
+    // Assign quantity
+    product.qty = quantity;
     ShoppingCartCollection.update(
       {
         userId,
