@@ -28,15 +28,14 @@ import { MarketsLastMinute } from './pages/users/MarketsLastMinute';
 import { MarketLastMinuteProducts } from './pages/users/MarketLastMinuteProducts';
 
 import { PropsRoute } from './pages/PropsRoute';
-// import { Navbar } from './components/Navbar';
-// import { MarketFooterNavbar } from './components/MarketFooterNavbar';
-// import { CustomerFooterNavbar } from './components/CustomerFooterNavbar';
+import { Navbar } from './components/Navbar';
+import { MarketFooterNavbar } from './components/MarketFooterNavbar';
+import { CustomerFooterNavbar } from './components/CustomerFooterNavbar';
 import { mainTheme } from './styles/theme';
 
 import { Chat } from './components/Chat';
 import { PurchaseOptimizer } from './pages/customer/PurchaseOptimizer';
 import { ShoppingCart } from './pages/customer/ShoppingCart';
-import { ProductList } from './pages/customer/markets/ProductsList';
 
 const MainContainer = styled.div`
   min-height: 100vh;
@@ -45,7 +44,10 @@ const MainContainer = styled.div`
 `;
 
 const Body = styled.div`
-  
+  margin: 55px;
+  flex: 1;
+  display: flex;
+  flex-flow: column nowrap;
 `;
 
 export function App() {
@@ -60,59 +62,58 @@ export function App() {
   return (
     <ThemeProvider theme={mainTheme}>
       <Router>
-
-        {
+        <MainContainer>
+          {
             loggedIn
               ? (
                 <>
-                  {/* <PropsRoute component={Navbar} /> */}
-                  <Switch>
-                    {
-                      userType === 'comercio' && (
-                        <>
-                          <PropsRoute exact path="/" component={MarketDashboard} />
+                  <PropsRoute component={Navbar} />
+                  <div style={{ marginTop: '7%' }}>
+                    <Body>
+                      <Switch>
+                        {
+                          userType === 'comercio' && (
+                            <>
+                              <PropsRoute exact path="/" component={MarketDashboard} />
 
-                          <PropsRoute exact path="/offers" component={Offers} />
-                          <PropsRoute exact path="/offers/add" component={OffersAdd} />
-                          <PropsRoute exact path="/offers/manage" component={OffersManage} />
-                          <PropsRoute exact path="/offers/historical" component={OffersHistorical} />
+                              <PropsRoute exact path="/offers" component={Offers} />
+                              <PropsRoute exact path="/offers/add" component={OffersAdd} />
+                              <PropsRoute exact path="/offers/manage" component={OffersManage} />
+                              <PropsRoute exact path="/offers/historical" component={OffersHistorical} />
 
-                          <PropsRoute exact path="/lastminute" component={LastMinute} />
-                          <PropsRoute exact path="/lastminute/add" component={LastMinuteAdd} />
-                          <PropsRoute exact path="/lastminute/manage" component={LastMinuteManage} />
-                          <PropsRoute exact path="/lastminute/historical" component={LastMinuteHistorical} />
-                        </>
-                      )
-                    }
-                    {
-                      userType === 'cliente' && (
-                        <>
-                          <PropsRoute exact path="/" component={CustomerDashboard} />
+                              <PropsRoute exact path="/lastminute" component={LastMinute} />
+                              <PropsRoute exact path="/lastminute/add" component={LastMinuteAdd} />
+                              <PropsRoute exact path="/lastminute/manage" component={LastMinuteManage} />
+                              <PropsRoute exact path="/lastminute/historical" component={LastMinuteHistorical} />
+                            </>
+                          )
+                        }
+                        {
+                          userType === 'cliente' && (
+                            <>
+                              <PropsRoute exact path="/shoppingCart" component={ShoppingCart} />
 
-                          <PropsRoute exact path="/markets/:id" component={ProductList} />
-                          <PropsRoute exact path="/eco/:id" component={ProductList} />
-                          <PropsRoute exact path="/supermarkets/:id" component={ProductList} />
+                              <PropsRoute exact path="/marketsOffers" component={Markets} />
+                              <PropsRoute exact path="/marketsOffers/:id" component={MarketProducts} />
 
-                          <PropsRoute exact path="/shoppingCart" component={ShoppingCart} />
+                              <PropsRoute exact path="/marketsLastMinute" component={MarketsLastMinute} />
+                              <PropsRoute exact path="/marketsLastMinute/:id" component={MarketLastMinuteProducts} />
 
-                          {/* <PropsRoute exact path="/marketsOffers" component={Markets} />
-                          <PropsRoute exact path="/marketsOffers/:id" component={MarketProducts} />
+                              <PropsRoute exact path="/supermarkets" component={Supermarkets} />
+                              <PropsRoute exact path="/supermarkets/:id" component={SupermarketProducts} />
 
-                          <PropsRoute exact path="/marketsLastMinute" component={MarketsLastMinute} />
-                          <PropsRoute exact path="/marketsLastMinute/:id" component={MarketLastMinuteProducts} />
+                              <PropsRoute exact path="/purchaseOptimizer" component={PurchaseOptimizer} />
 
-                          <PropsRoute exact path="/supermarkets" component={Supermarkets} />
-                          <PropsRoute exact path="/supermarkets/:id" component={SupermarketProducts} /> */}
-
-                          <PropsRoute exact path="/purchaseOptimizer" component={PurchaseOptimizer} />
-
-                        </>
-                      )
-                    }
-                    {/* <PropsRoute component={NotFound} /> */}
-                  </Switch>
+                              <PropsRoute exact path="/" component={CustomerDashboard} />
+                            </>
+                          )
+                        }
+                        {/* <PropsRoute component={NotFound} /> */}
+                      </Switch>
+                    </Body>
+                  </div>
                   <PropsRoute component={Chat} />
-                  {/* {
+                  {
                     userType === 'comercio' && (
                       <PropsRoute component={MarketFooterNavbar} />
                     )
@@ -121,7 +122,7 @@ export function App() {
                     userType === 'cliente' && (
                       <PropsRoute component={CustomerFooterNavbar} />
                     )
-                  } */}
+                  }
 
                 </>
               )
@@ -134,6 +135,7 @@ export function App() {
                 </div>
               )
           }
+        </MainContainer>
       </Router>
     </ThemeProvider>
   );

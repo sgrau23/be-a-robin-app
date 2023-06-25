@@ -1,0 +1,23 @@
+:root {
+  --bodyColor: #e6e6e6;
+  /* --bodyColor: #ffffff; */
+  --menuColor:  hsl(0, 0%, 100%);
+}
+
+/* .generalPadding {
+  padding: 10px;
+} */
+
+body {
+  font-family: monospace;
+  background-color: var(--bodyColor);
+}
+
+/* .MuiInputLabel-root {
+  color: green !important;
+} */
+
+.MuiMenu-list {
+  box-shadow: 0;
+  background-color: var(--menuColor);
+}

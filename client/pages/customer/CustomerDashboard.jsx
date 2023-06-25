@@ -1,55 +1,100 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { DashboardCard } from '../../components/DashboardCard';
-import { ResponsiveGrid } from '../../components/ResponsiveGrid';
+import { useTracker } from 'meteor/react-meteor-data';
+import {
+  Grid,
+} from '@mui/material';
+import { CustomerFooterNavbar } from '../../components/navigations/CustomerFooterNavbar';
+import { CustomerTopNavbar } from '../../components/navigations/CustomerTopNavbar';
+import { MarketTypes } from '../../components/others/MarketTypes';
+import { SupermarketsCollection } from '../../../imports/db/collections';
+import { MarketCard } from '../../components/markets/MarketCard';
 
 export function CustomerDashboard() {
-  const { t } = useTranslation();
-  const [totalLastMinuteProducts, setTotalLastMinuteProducts] = useState();
+  //   const { t } = useTranslation();
+  const [marketsList, setMarketsList] = useState([]);
+  const [supermarketsList, setSupermarketsList] = useState([]);
+  const [ecoList, setEcoList] = useState([]);
+  // const [marketsList, setMarketsList] = useState([]);
+  const [marketTypeSelected, setMarketTypeSelected] = useState('frescos');
 
-  useEffect(() => {
-    Meteor.call('lastMinute.getTotalProducts', (error, result) => {
-      if (error) console.log(error);
-      else setTotalLastMinuteProducts(result);
-    });
+  // Get all supermarkets
+  useTracker(() => {
+    const handler = Meteor.subscribe('markets');
+    if (!handler.ready()) setMarketsList([]);
+    else {
+      const data = Meteor.users.find({ 'profile.attributes.userType': 'comercio' }).fetch();
+      const markets = [];
+      const eco = [];
+      data.forEach((element) => {
+        if (element.profile.attributes.eco === 'yes') eco.push(element);
+        else markets.push(element);
+      });
+      setMarketsList(markets);
+      setEcoList(eco);
+    }
+  }, []);
+  // Get all markets
+  useTracker(() => {
+    const handler = Meteor.subscribe('supermarkets');
+    if (!handler.ready()) setSupermarketsList([]);
+    else {
+      const data = SupermarketsCollection.find().fetch();
+      setSupermarketsList(data);
+    }
   }, []);
 
-  const items = [
-    {
-      component: <DashboardCard logo="secos-offers.png" contentText={t('Rastreador de ofertas en supermercados')} route="/supermarkets" />,
-      key: 'rastreator',
-    },
-    {
-      component: <DashboardCard logo="frescos-offers.jpeg" contentText={t('Rastreador de ofertas en comercios de proximidad')} route="/marketsOffers" />,
-      key: 'marketRastreator',
-    },
-    {
-      component: <DashboardCard logo="compra.jpeg" contentText={t('Optmiza tu compra')} route="/purchaseOptimizer" />,
-      key: 'compra',
-    },
-    {
-      component: <DashboardCard logo="tienda-eco.jpeg" contentText={t('Tienda ECO')} route="/echoshop" />,
-      key: 'eco',
-    },
-    {
-      component: <DashboardCard logo="lastminute.jpeg" contentText={t('Last Minute')} route="/marketsLastMinute" notifications={totalLastMinuteProducts} />,
-      key: 'lastminute',
-    },
-  ];
+  useEffect(() => {
+    console.log(marketTypeSelected);
+  }, [marketTypeSelected]);
 
   return (
-    <ResponsiveGrid
-      containerSpacing={{
-        xs: 5, sm: 8, md: 15, lg: 15,
-      }}
-      containerColumns={{
-        xs: 12, sm: 8, md: 12, lg: 12,
-      }}
-      itemXs={12}
-      itemSm={4}
-      itemMd={4}
-      itemLg={4}
-      items={items}
-    />
+    <>
+      <CustomerTopNavbar />
+      <div
+        style={{
+          marginTop: '53px',
+          width: '100%',
+        }}
+      >
+        <Grid
+          container
+          columns={{
+            xs: 12, sm: 12, md: 12, lg: 12,
+          }}
+          spacing={{
+            xs: '5px', sm: '5px', md: '5px', lg: '5px',
+          }}
+        >
+          <Grid
+            item
+            xs={12}
+            sm={12}
+            md={12}
+            lg={12}
+          >
+            <MarketTypes
+              marketTypeSelected={marketTypeSelected}
+              setMarketTypeSelected={setMarketTypeSelected}
+            />
+          </Grid>
+          {
+            marketTypeSelected === 'frescos' && (
+              marketsList.map((market) => <MarketCard data={market} key={market.profile.attributes.marketName} type="markets" />)
+            )
+          }
+          {
+            marketTypeSelected === 'eco' && (
+              ecoList.map((market) => <MarketCard data={market} key={market.profile.attributes.marketName} type="eco" />)
+            )
+          }
+          {
+            marketTypeSelected === 'secos' && (
+              supermarketsList.map((market) => <MarketCard data={market} key={market.profile.attributes.marketName} type="supermarkets" />)
+            )
+          }
+        </Grid>
+      </div>
+      <CustomerFooterNavbar />
+    </>
   );
 }
