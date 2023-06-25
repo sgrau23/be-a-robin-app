@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 import { useTranslation } from 'react-i18next';
 import {
@@ -6,47 +6,49 @@ import {
 } from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import TuneIcon from '@mui/icons-material/Tune';
+import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 
+const options = {
+  enableHighAccuracy: true,
+  timeout: 5000,
+  maximumAge: 0,
+};
 export function CustomerTopNavbar() {
   // const [totalProductsCart, setTotalProductsCart] = useState(0);
-  const [location, setLocation] = useState();
+  const [currentLocation, setCurrentLocation] = useState();
+  const [coordinates, setCoordinates] = useState();
   // Translations
   const { t } = useTranslation();
-  // useTracker(() => {
-  //   const handler = Meteor.subscribe('shoppingCart', Meteor.user()._id);
-  //   if (!handler.ready()) setTotalProductsCart(0);
-  //   else setTotalProductsCart(ShoppingCartCollection.find().fetch().length);
-  // }, []);
+
+  function success(pos) {
+    const crd = pos.coords;
+    setCoordinates({
+      latitude: crd.latitude,
+      longitude: crd.longitude,
+    });
+  }
+
+  function error(err) {
+    console.warn(`ERROR(${err.code}): ${err.message}`);
+  }
+
+  // Obtain current coordinats of user
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(success, error, options);
+  }, []);
 
   const onHandleFilters = () => {
     console.log('FILTERS');
   };
 
-  // function success(position) {
-  //   const { latitude } = position.coords;
-  //   const { longitude } = position.coords;
-  //   setLocation({ latitude, longitude });
-  //   console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-
-  //   // Make API call to OpenWeatherMap
-  //   fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=<YOUR_API_KEY>&units=metric`)
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       // setWeather(data);
-  //       console.log(data);
-  //     })
-  //     .catch((error) => console.log(error));
-  // }
-
-  // function error() {
-  //   console.log('Unable to retrieve your location');
-  // }
-
-  // if (navigator.geolocation) {
-  //   console.log(navigator.geolocation.getCurrentPosition(success, error));
-  // } else {
-  //   console.log('Geolocation not supported');
-  // }
+  useEffect(() => {
+    if (coordinates) {
+      Meteor.call('location.getAddress', coordinates, (err, result) => {
+        if (err) console.log(err);
+        else setCurrentLocation(result);
+      });
+    }
+  }, [coordinates]);
 
   return (
     <AppBar
@@ -77,23 +79,50 @@ export function CustomerTopNavbar() {
         >
           <Grid
             item
-            xs={10}
-            sm={10}
-            md={10}
-            lg={10}
-          >
-            <Typography
-              color="black"
-            >
-              {/* aaa */}
-            </Typography>
-          </Grid>
-          <Grid
-            item
             xs={2}
             sm={2}
             md={2}
             lg={2}
+          />
+          <Grid
+            item
+            xs={7}
+            sm={7}
+            md={7}
+            lg={7}
+          >
+
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+            }}
+            >
+              <GpsFixedIcon
+                color="primary"
+                sx={{
+                  marginRight: '9px',
+                }}
+              />
+              <Typography
+                color="black"
+                sx={{
+                  fontWeight: 'bold',
+                  fontSize: 12,
+                }}
+              >
+                {`${(currentLocation || t('No localización'))}`}
+              </Typography>
+            </div>
+
+            {/* <GpsFixedIcon color="primary" /> */}
+          </Grid>
+          <Grid
+            item
+            xs={1}
+            sm={1}
+            md={1}
+            lg={1}
           >
             <Box
               onClick={onHandleFilters}

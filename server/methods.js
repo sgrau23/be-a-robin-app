@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
+import Future from 'fibers/future';
 import { check } from 'meteor/check';
-import { ContactEmergency } from '@mui/icons-material';
+import fetch from 'node-fetch';
 import { createUser } from './openid';
 import {
   MarketsOfferProductsTemporalCollection,
@@ -346,5 +347,22 @@ Meteor.methods({
   'shoppingCart.deleteUserProducts': (userId) => {
     check(userId, String);
     return ShoppingCartCollection.remove({ userId });
+  },
+  'location.getAddress': (coordinates) => {
+    check(coordinates, Object);
+    const future = new Future();
+    fetch(
+      `https://geocode.maps.co/reverse?lat=${coordinates.latitude}&lon=${coordinates.longitude}`,
+      {
+        method: 'get',
+        // headers,
+      },
+    )
+      .then((data) => data.json())
+      .then((r) => future.return(r))
+      .catch((error) => { console.error(error); future.return(); });
+    const response = future.wait();
+    // Return fomatted address
+    return `${response.address.road},${(response.address.house_number ? response.address.house_number : response.address.city)}`;
   },
 });
