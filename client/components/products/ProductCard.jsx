@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import { ProductDetails } from './ProductDetails';
 
-export function ProductCard({ product }) {
+export function ProductCard({ product, shoppingView = false }) {
   const { t } = useTranslation();
   const { categoriesMapping } = Meteor.settings.public;
   const [openDetails, setOpenDetails] = useState(false);
@@ -15,7 +15,12 @@ export function ProductCard({ product }) {
   };
 
   const onHandleProductClick = () => {
-    setOpenDetails(true);
+    if (!shoppingView) setOpenDetails(true);
+    else {
+      Meteor.call('shoppingCart.changeStatus', Meteor.user()._id, product, (product.disabled === false), (error) => {
+        if (error) console.log(error);
+      });
+    }
   };
 
   return (
@@ -59,6 +64,20 @@ export function ProductCard({ product }) {
               >
                 {product.name}
               </Typography>
+              {
+                shoppingView && (
+                  <Typography
+                    sx={{
+                      fontStyle: 'italic',
+                      fontWeight: 'bold',
+                      fontSize: 12,
+                      color: 'primary.main',
+                    }}
+                  >
+                    {product.marketName}
+                  </Typography>
+                )
+              }
               <Typography
                 sx={{
                   fontStyle: 'italic',
@@ -154,11 +173,16 @@ export function ProductCard({ product }) {
           </Grid>
         </Box>
       </Box>
-      <ProductDetails
-        product={product}
-        open={openDetails}
-        onHandleClose={onHandleClose}
-      />
+      {
+        !shoppingView && (
+          <ProductDetails
+            product={product}
+            open={openDetails}
+            onHandleClose={onHandleClose}
+          />
+        )
+      }
+
     </>
 
   );

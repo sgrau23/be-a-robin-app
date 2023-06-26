@@ -20,7 +20,7 @@ export function CustomerFooterNavbar() {
   useTracker(() => {
     const handler = Meteor.subscribe('shoppingCart', Meteor.user()._id);
     if (!handler.ready()) setTotalProductsCart(0);
-    else setTotalProductsCart(ShoppingCartCollection.find().fetch().length);
+    else setTotalProductsCart(ShoppingCartCollection.find({ $or: [{ 'product.disabled': false }, { 'product.disabled': { $exists: false } }] }).fetch().length);
   }, []);
 
   const navIcons = [
@@ -43,7 +43,7 @@ export function CustomerFooterNavbar() {
           <ShoppingBasketIcon fontSize="medium" color="secondary" />
         </>
       )}
-      route="/shoppingCart"
+      route="/shoppingList"
       text="Compra"
       key="compra"
     />,
@@ -65,6 +65,7 @@ export function CustomerFooterNavbar() {
         position: 'fixed',
         backgroundColor: 'primary.main',
         display: 'flex',
+        height: '60px',
       }}
       style={{
         maxWidth: '100%',

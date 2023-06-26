@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 // import { useTranslation } from 'react-i18next';
 import {
-  Fab, Dialog, AppBar, Toolbar, IconButton, Slide, Typography,
-  Divider, List, ListItem, ListItemAvatar, ListItemText, Avatar,
+  Fab, Dialog, AppBar, Toolbar, IconButton, Typography,
+  List, ListItem, ListItemText,
   DialogTitle, DialogContent, Grid, CardActions, Button, MenuItem, InputLabel,
   FormControl, Select,
 } from '@mui/material';
@@ -12,8 +12,8 @@ import ChatIcon from '@mui/icons-material/Chat';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import { ChatConversationsCollection } from '../../imports/db/collections';
-import { TextInput } from '../styles/styledComponents';
+import { ChatConversationsCollection } from '../../../imports/db/collections';
+import { TextInput } from '../../styles/styledComponents';
 import { Conversation } from './Conversation';
 
 const defaultNewChat = {
@@ -92,7 +92,7 @@ export function Chat() {
         // TransitionComponent={Transition}
         PaperProps={{
           style: {
-            backgroundColor: '#e6e6e6',
+            backgroundColor: '#fffff',
             boxShadow: 'none',
           },
         }}
@@ -159,23 +159,37 @@ export function Chat() {
               </Fab>
               <Dialog
                 open={openNewChatModal}
-                // TransitionComponent={Transition}
                 PaperProps={{
                   style: {
-                    backgroundColor: '#e6e6e6',
+                    backgroundColor: '#fffff',
                     boxShadow: 'none',
                   },
                 }}
                 keepMounted
               >
                 <DialogTitle>
-                  <CloseRoundedIcon
+                  <Fab
                     style={{
-                      cursor: 'pointer', float: 'right', marginTop: '5px', width: '20px',
+                      cursor: 'pointer',
+                      float: 'right',
+                      // marginTop: '5px',
+                      width: '35px',
+                      height: '10px',
                     }}
-                    onClick={() => setOpenNewChatModal(false)}
-                  />
-                  {t('Iniciar nueva conversación:')}
+                  >
+                    <CloseRoundedIcon
+                      onClick={() => setOpenNewChatModal(false)}
+                    />
+                  </Fab>
+                  <Typography
+                    sx={{
+                      fontWeight: 'bold',
+                      fontSize: 20,
+                    }}
+                  >
+                    {t('Iniciar nueva conversación:')}
+                  </Typography>
+
                 </DialogTitle>
                 <DialogContent>
                   <form onSubmit={onHandleNewChat}>

@@ -10,6 +10,7 @@ import {
   MarketsLastMinuteProductsCollection, MarketsHistoricalLastMinuteProductsCollection,
   ChatConversationsCollection, ChatConversationsMessagesCollection,
   OptimizedPurchaseCollection, ShoppingCartCollection,
+  HistoricalShoppingCartCollection,
 } from '../imports/db/collections';
 import { getProductProposal } from './inuba';
 
@@ -340,13 +341,23 @@ Meteor.methods({
         name: product.name,
       },
       {
-        $set: { disabled },
+        $set: { 'product.disabled': disabled },
       },
     );
   },
   'shoppingCart.deleteUserProducts': (userId) => {
     check(userId, String);
-    return ShoppingCartCollection.remove({ userId });
+    const products = ShoppingCartCollection.find({ userId }).fetch();
+    // Move to the historical collection
+    HistoricalShoppingCartCollection.insert(
+      {
+        userId,
+        products,
+        timestamp: new Date(),
+      },
+    );
+    // Remove from the actual collection
+    ShoppingCartCollection.remove({ userId });
   },
   'location.getAddress': (coordinates) => {
     check(coordinates, Object);

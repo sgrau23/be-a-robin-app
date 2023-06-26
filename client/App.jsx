@@ -3,15 +3,12 @@ import { useTracker } from 'meteor/react-meteor-data';
 import {
   BrowserRouter as Router, Switch,
 } from 'react-router-dom';
-import styled from 'styled-components';
 import { ThemeProvider } from '@mui/material/styles';
 import React from 'react';
 import { Login } from './pages/users/Login';
 import { Registration } from './pages/users/Registration';
 import { CustomerDashboard } from './pages/customer/CustomerDashboard';
 import { MarketDashboard } from './pages/market/MarketDashboard';
-import { Supermarkets } from './pages/supermarkets/Supermarkets';
-import { SupermarketProducts } from './pages/supermarkets/SupermarketProducts';
 import { Offers } from './pages/market/offers/Offers';
 import { OffersAdd } from './pages/market/offers/OffersAdd';
 import { OffersManage } from './pages/market/offers/OffersManage';
@@ -22,31 +19,16 @@ import { LastMinuteAdd } from './pages/market/lastminute/LastMinuteAdd';
 import { LastMinuteManage } from './pages/market/lastminute/LastMinuteManage';
 import { LastMinuteHistorical } from './pages/market/lastminute/LastMinuteHistorical';
 
-import { Markets } from './pages/users/Markets';
-import { MarketProducts } from './pages/users/MarketProducts';
-import { MarketsLastMinute } from './pages/users/MarketsLastMinute';
-import { MarketLastMinuteProducts } from './pages/users/MarketLastMinuteProducts';
-
 import { PropsRoute } from './pages/PropsRoute';
 // import { Navbar } from './components/Navbar';
 // import { MarketFooterNavbar } from './components/MarketFooterNavbar';
 // import { CustomerFooterNavbar } from './components/CustomerFooterNavbar';
 import { mainTheme } from './styles/theme';
 
-import { Chat } from './components/Chat';
+import { Chat } from './components/chat/Chat';
 import { PurchaseOptimizer } from './pages/customer/PurchaseOptimizer';
-import { ShoppingCart } from './pages/customer/ShoppingCart';
 import { ProductList } from './pages/customer/markets/ProductsList';
-
-const MainContainer = styled.div`
-  min-height: 100vh;
-  display: flex;
-  flex-flow: column nowrap;
-`;
-
-const Body = styled.div`
-  
-`;
+import { ShoppingList } from './components/shopping/ShoppingList';
 
 export function App() {
   const { loggedIn, userType } = useTracker(() => {
@@ -93,7 +75,7 @@ export function App() {
                           <PropsRoute exact path="/eco/:id" component={ProductList} />
                           <PropsRoute exact path="/supermarkets/:id" component={ProductList} />
 
-                          <PropsRoute exact path="/shoppingCart" component={ShoppingCart} />
+                          <PropsRoute exact path="/shoppingList" component={ShoppingList} />
 
                           {/* <PropsRoute exact path="/marketsOffers" component={Markets} />
                           <PropsRoute exact path="/marketsOffers/:id" component={MarketProducts} />

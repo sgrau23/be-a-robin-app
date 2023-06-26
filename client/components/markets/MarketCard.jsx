@@ -1,12 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useTracker } from 'meteor/react-meteor-data';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  Grid, Typography, Box,
+  Grid, Typography, Box, Badge,
 } from '@mui/material';
+import {
+  MarketsLastMinuteProductsCollection,
+} from '../../../imports/db/collections';
 
 export function MarketCard({ data, type }) {
   const { t } = useTranslation();
+  const [totalLastMinuteProducts, setTotalLastMinuteProducts] = useState(0);
+
+  // Get last minute market products
+  useTracker(() => {
+    if (type !== 'supermarkets') {
+      const handler = Meteor.subscribe('marketLastMinuteProducts', data.profile.attributes.marketName);
+      if (!handler.ready()) setTotalLastMinuteProducts(0);
+      else {
+        const total = MarketsLastMinuteProductsCollection.find({
+          marketName: data.profile.attributes.marketName,
+        }).fetch().length;
+        setTotalLastMinuteProducts(total);
+      }
+    }
+  }, []);
 
   return (
     <Grid
@@ -48,6 +67,11 @@ export function MarketCard({ data, type }) {
                 md={12}
                 lg={12}
               >
+                <Badge
+                  badgeContent={totalLastMinuteProducts}
+                  color="error"
+                  sx={{ marginRight: '10px', float: 'right' }}
+                />
                 <img
                   src={data.profile.image}
                   alt=""

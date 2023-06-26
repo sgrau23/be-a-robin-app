@@ -1,39 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
-// import { useTranslation } from 'react-i18next';
 import {
-  Fab, Dialog, AppBar, Toolbar, IconButton, Slide, Typography,
+  Dialog, AppBar, Toolbar, IconButton, Typography,
   Divider, List, ListItem, ListItemAvatar, ListItemText, Avatar, Badge,
-  Box, Container, TextField, Grid, Label,
+  Box, Container, TextField, Grid,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import ChatIcon from '@mui/icons-material/Chat';
-import CloseIcon from '@mui/icons-material/Close';
-import AddIcon from '@mui/icons-material/Add';
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
 import SendIcon from '@mui/icons-material/Send';
-import { ChatConversationsMessagesCollection } from '../../imports/db/collections';
-import { TextInput } from '../styles/styledComponents';
-import { mainTheme } from '../styles/theme';
+import { ChatConversationsMessagesCollection } from '../../../imports/db/collections';
 import { ChatMessage } from './ChatMessage';
-
-const defaultNewChat = {
-  title: '',
-  message: '',
-  destinataryName: '',
-  destinataryId: '',
-};
 
 export function Conversation({ data }) {
   const { userType } = Meteor.user().profile.attributes;
   const { t } = useTranslation();
-  //   const [marketsLastMinuteList, setMarketsLastMinuteList] = useState([]);
-  //   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
   const [unreadMessages, setUnreadMessages] = useState(0);
-  const [lastMessage, setLastMessage] = useState('');
   const [openMessages, setOpenMessages] = useState(false);
 
   const setMessagesAsRead = () => {
@@ -55,12 +38,6 @@ export function Conversation({ data }) {
         ChatConversationsMessagesCollection.find({ chatId: data._id }, { sort: { createdTime: -1 } }).fetch(),
       );
     }
-    // Set last message
-    // const result = ChatConversationsMessagesCollection.find({
-    //   chatId: data._id,
-    // }, { sort: { createdTime: 1, _id: 1 }, limit: 1 }).fetch();
-    // console.log(result);
-    // if (result.length > 0) setLastMessage(result[0].message);
     // Obtain total unread messages
     ChatConversationsMessagesCollection.countDocuments({
       chatId: data._id,
@@ -82,15 +59,6 @@ export function Conversation({ data }) {
     }
   };
 
-  //   const onHandleNewChat = () => {
-
-  //   };
-
-  //   const onHandleNewChatData = (e) => {
-  //     console.log(e.target);
-  //     setNewChatData({ ...newChatData, [e.target.name]: e.target.value });
-  //   };
-
   return (
     <>
 
@@ -111,24 +79,16 @@ export function Conversation({ data }) {
 
           )}
           secondary={(
-            <>
-              <Typography
-                sx={{ display: 'inline' }}
-                component="span"
-                variant="body2"
-                color="text.primary"
-              >
-                {(userType === 'cliente' ? data.receiverName : data.senderName)}
+            <Typography
+              sx={{ display: 'inline' }}
+              component="span"
+              variant="body2"
+              color="text.primary"
+            >
+              {(userType === 'cliente' ? data.receiverName : data.senderName)}
 
-              </Typography>
-              {/* <Typography
-                noWrap
-                // style={{ textOverflow: 'ellipsis' }}
-              >
-                {` - ${lastMessage}`}
-              </Typography> */}
-            </>
-            )}
+            </Typography>
+          )}
         />
       </ListItem>
       <Divider component="li" />
@@ -137,10 +97,9 @@ export function Conversation({ data }) {
         fullScreen
         open={openMessages}
         onClose={() => setOpenMessages(false)}
-        // TransitionComponent={Transition}
         PaperProps={{
           style: {
-            backgroundColor: '#e6e6e6',
+            backgroundColor: '#fffff',
             boxShadow: 'none',
           },
         }}
@@ -156,15 +115,17 @@ export function Conversation({ data }) {
               <ArrowBackIosRoundedIcon />
             </IconButton>
 
-            <Typography>
+            <Typography
+              sx={{
+                fontWeight: 'bold',
+                fontSize: 15,
+              }}
+            >
               {`${t('Asunto')} - ${data.title}`}
             </Typography>
 
           </Toolbar>
         </AppBar>
-        {/* <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-          aa
-        </List> */}
         <Container
           sx={{
             width: '100%',
@@ -178,20 +139,12 @@ export function Conversation({ data }) {
             sx={{
               width: '100%',
               height: '90%',
-              // border: 2,
-              // borderColor: mainTheme.palette.primary.main,
               backgroundColor: '#E2E4E0',
               boxShadow: 10,
               borderRadius: 2,
-            // backgroundColor: 'primary.dark',
-            // '&:hover': {
-            //   backgroundColor: 'primary.main',
-            //   opacity: [0.9, 0.8, 0.7],
-            // },
             }}
           >
             <List style={{ maxHeight: '100%', overflow: 'auto' }}>
-
               {
                 messages.map((element) => (
                   <Grid

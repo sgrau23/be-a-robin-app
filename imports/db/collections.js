@@ -16,5 +16,6 @@ export const ChatConversationsMessagesCollection = new Mongo.Collection('chatCon
 export const OptimizedPurchaseCollection = new Mongo.Collection('optimizedPurchase');
 // SHOPPING CART
 export const ShoppingCartCollection = new Mongo.Collection('shoppingCart');
+export const HistoricalShoppingCartCollection = new Mongo.Collection('historicalShoppingCart');
 // USERS TEMPORAL PROFILE PHOTO
 export const UsersTemporalPhotoCollection = new Mongo.Collection('usersTemporalPhoto');
