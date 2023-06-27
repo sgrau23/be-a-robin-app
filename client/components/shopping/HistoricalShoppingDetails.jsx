@@ -37,7 +37,7 @@ export function HistoricalShoppingDetails({ ...props }) {
               marginBottom: '60px',
             }}
           >
-            <ShoppingListTopNavbar text={`${t('Compra de')} ${data.timestamp.toLocaleDateString()}`} historical historicalDetails />
+            <ShoppingListTopNavbar text={`${t('Compra del')} ${data.timestamp.toLocaleDateString()}`} historical historicalDetails />
             <Grid
               container
               columns={{

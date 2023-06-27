@@ -74,7 +74,7 @@ export function HistoricalShoppingCard({ data, idx }) {
                 }}
               >
                 <b>{`#${idx} - `}</b>
-                {`${t('Compra de')} ${data.timestamp.toLocaleDateString()}`}
+                {`${t('Compra del')} ${data.timestamp.toLocaleDateString()}`}
               </Typography>
               <Typography
                 sx={{
