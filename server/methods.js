@@ -359,6 +359,14 @@ Meteor.methods({
     // Remove from the actual collection
     ShoppingCartCollection.remove({ userId });
   },
+  'shoppingCart.getallHistorical': (userId) => {
+    check(userId, String);
+    return HistoricalShoppingCartCollection.find({ userId }).fetch();
+  },
+  'shoppingCart.getHistoricalList': (_id) => {
+    check(_id, String);
+    return HistoricalShoppingCartCollection.find({ _id }).fetch();
+  },
   'location.getAddress': (coordinates) => {
     check(coordinates, Object);
     const future = new Future();
@@ -374,6 +382,9 @@ Meteor.methods({
       .catch((error) => { console.error(error); future.return(); });
     const response = future.wait();
     // Return fomatted address
-    return `${response.address.road},${(response.address.house_number ? response.address.house_number : response.address.city)}`;
+    if (response.address) {
+      return `${response.address.road},${(response.address.house_number ? response.address.house_number : response.address.city)}`;
+    }
+    return undefined;
   },
 });

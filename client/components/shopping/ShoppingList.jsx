@@ -3,8 +3,8 @@ import { useTracker } from 'meteor/react-meteor-data';
 import { useTranslation } from 'react-i18next';
 import {
   Grid, Box, Alert, Typography, Fab, DialogActions,
-  DialogContent, Dialog, Button, DialogTitle,
-  DialogContentText,
+  DialogContent, Dialog, Button, DialogTitle, Backdrop,
+  DialogContentText, CircularProgress,
 } from '@mui/material';
 import $ from 'jquery';
 import { makeStyles } from '@material-ui/core';
@@ -78,6 +78,12 @@ export function ShoppingList() {
 
   return (
     <>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={!pendingProduts}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <Dialog
         open={openDeleteConfirmationDialog}
         aria-labelledby="alert-dialog-title"
@@ -127,7 +133,7 @@ export function ShoppingList() {
           marginBottom: '60px',
         }}
       >
-        <ShoppingListTopNavbar onHandleTypeChange={onHandleTypeProducts} />
+        <ShoppingListTopNavbar text="Lista de la compra" onHandleTypeChange={onHandleTypeProducts} />
         <Grid
           container
           columns={{

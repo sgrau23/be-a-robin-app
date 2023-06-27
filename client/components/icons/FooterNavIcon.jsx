@@ -1,13 +1,15 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Grid, Typography,
+  Grid, Typography, Badge, IconButton,
 } from '@mui/material';
 import {
   Link,
 } from 'react-router-dom';
 
-export function FooterNavIcon({ iconComponent, text, route }) {
+export function FooterNavIcon({
+  iconComponent, text, route, notifications,
+}) {
   // Translations
   const { t } = useTranslation();
   return (
@@ -18,6 +20,7 @@ export function FooterNavIcon({ iconComponent, text, route }) {
           xs: 12, sm: 12, md: 12, lg: 12,
         }}
         textAlign="center"
+        justifyContent="center"
       >
         <Grid
           item
@@ -27,7 +30,10 @@ export function FooterNavIcon({ iconComponent, text, route }) {
           lg={12}
         >
           <Link to={route}>
-            {iconComponent}
+            <IconButton>
+              <Badge badgeContent={notifications} color="error" overlap="circular" style={{ transform: 'translate(30px, -20px)' }} />
+              {iconComponent}
+            </IconButton>
           </Link>
         </Grid>
         <Grid

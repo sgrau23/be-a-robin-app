@@ -29,6 +29,8 @@ import { Chat } from './components/chat/Chat';
 import { PurchaseOptimizer } from './pages/customer/PurchaseOptimizer';
 import { ProductList } from './pages/customer/markets/ProductsList';
 import { ShoppingList } from './components/shopping/ShoppingList';
+import { HistoricalShoppingList } from './components/shopping/HistoricalShoppingList';
+import { HistoricalShoppingDetails } from './components/shopping/HistoricalShoppingDetails';
 
 export function App() {
   const { loggedIn, userType } = useTracker(() => {
@@ -76,6 +78,8 @@ export function App() {
                           <PropsRoute exact path="/supermarkets/:id" component={ProductList} />
 
                           <PropsRoute exact path="/shoppingList" component={ShoppingList} />
+                          <PropsRoute exact path="/historicalShoppingList" component={HistoricalShoppingList} />
+                          <PropsRoute exact path="/historicalShoppingList/:id" component={HistoricalShoppingDetails} />
 
                           {/* <PropsRoute exact path="/marketsOffers" component={Markets} />
                           <PropsRoute exact path="/marketsOffers/:id" component={MarketProducts} />
