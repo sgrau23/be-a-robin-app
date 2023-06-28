@@ -83,26 +83,26 @@ Meteor.methods({
     });
     return categories;
   },
-  'products.createTemporalOffer': (productData, marketId) => {
+  'products.createOffer': (productData, marketId) => {
     check(productData, Object);
     check(marketId, String);
     // Parse date and add market id
     productData.marketName = marketId;
     if (productData.image === undefined) productData.image = settings.data.blank_image;
-    MarketsOfferProductsTemporalCollection.insert({
+    MarketsOfferProductsCollection.insert({
       ...productData,
     });
   },
-  'products.submitOffers': (offers) => {
-    check(offers, Array);
-    // Store offers and remove from temporal collection
-    offers.forEach((element) => {
-      MarketsOfferProductsCollection.insert({
-        ...element.offer,
-      });
-      removeTemporalOffer(element.offer._id);
-    });
-  },
+  // 'products.submitOffers': (offers) => {
+  //   check(offers, Array);
+  //   // Store offers and remove from temporal collection
+  //   offers.forEach((element) => {
+  //     MarketsOfferProductsCollection.insert({
+  //       ...element.offer,
+  //     });
+  //     removeTemporalOffer(element.offer._id);
+  //   });
+  // },
   'products.extendOffer': (offer, _id) => {
     check(offer, Object);
     check(_id, String);
@@ -123,6 +123,10 @@ Meteor.methods({
     });
     removeOffer(offer._id);
   },
+  'products.removeHistoricalOffer': (offer) => {
+    check(offer, Object);
+    removeHistoricalOffer(offer._id);
+  },
   'products.updateOffer': (offer, _id) => {
     check(offer, Object);
     check(_id, String);
@@ -130,13 +134,13 @@ Meteor.methods({
       { _id }, { $set: offer },
     );
   },
-  'products.createTemporalLastMinute': (productData, marketId) => {
+  'products.createLastMinute': (productData, marketId) => {
     check(productData, Object);
     check(marketId, String);
     // Parse date and add market id
     productData.marketName = marketId;
     if (productData.image === undefined) productData.image = settings.data.blank_image;
-    MarketsLastMinuteProductsTemporalCollection.insert({
+    MarketsLastMinuteProductsCollection.insert({
       ...productData,
     });
   },
@@ -169,6 +173,10 @@ Meteor.methods({
       ...lastminute,
     });
     removeLastMinute(lastminute._id);
+  },
+  'products.removeHistoricalLastMinute': (lastminute) => {
+    check(lastminute, Object);
+    removeHistoricalLastMinute(lastminute._id);
   },
   'products.updateLastMinute': (lastminute, _id) => {
     check(lastminute, Object);

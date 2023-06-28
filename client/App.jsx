@@ -55,8 +55,9 @@ export function App() {
                       userType === 'comercio' && (
                         <>
                           <PropsRoute exact path="/" component={MarketDashboard} />
+                          <PropsRoute exact path="/historicalOffers" component={MarketDashboard} />
 
-                          <PropsRoute exact path="/offers" component={Offers} />
+                          {/* <PropsRoute exact path="/offers" component={Offers} />
                           <PropsRoute exact path="/offers/add" component={OffersAdd} />
                           <PropsRoute exact path="/offers/manage" component={OffersManage} />
                           <PropsRoute exact path="/offers/historical" component={OffersHistorical} />
@@ -64,7 +65,7 @@ export function App() {
                           <PropsRoute exact path="/lastminute" component={LastMinute} />
                           <PropsRoute exact path="/lastminute/add" component={LastMinuteAdd} />
                           <PropsRoute exact path="/lastminute/manage" component={LastMinuteManage} />
-                          <PropsRoute exact path="/lastminute/historical" component={LastMinuteHistorical} />
+                          <PropsRoute exact path="/lastminute/historical" component={LastMinuteHistorical} /> */}
                         </>
                       )
                     }

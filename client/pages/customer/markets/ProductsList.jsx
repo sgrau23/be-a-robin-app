@@ -388,17 +388,7 @@ export function ProductList() {
                       lg={12}
                       key={lastminuteProduct.name}
                     >
-                      <Grid
-                        container
-                        columns={{
-                          xs: 12, sm: 12, md: 12, lg: 12,
-                        }}
-                        spacing={{
-                          xs: 0, sm: 0, md: 0, lg: 0,
-                        }}
-                      >
-                        <ProductCard product={lastminuteProduct} />
-                      </Grid>
+                      <ProductCard product={lastminuteProduct} />
                     </Grid>
                   ))
                 )

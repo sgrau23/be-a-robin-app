@@ -53,11 +53,11 @@ Meteor.publish('marketsOfferProductsTemporal', function MarketsOfferProductsTemp
   this.ready();
 });
 
-Meteor.publish('marketsOfferProducts', function MarketsOfferProducts(marketName) {
-  check(marketName, String);
-  if (this.userId) return MarketsOfferProductsCollection.find({ marketName });
-  this.ready();
-});
+// Meteor.publish('marketsOfferProducts', function MarketsOfferProducts(marketName) {
+//   check(marketName, String);
+//   if (this.userId) return MarketsOfferProductsCollection.find({ marketName });
+//   this.ready();
+// });
 
 Meteor.publish('marketsHistoricalOfferProducts', function MarketsHistoricalOfferProducts(marketName) {
   check(marketName, String);
@@ -89,13 +89,9 @@ Meteor.publish('markets', function Markets() {
   this.ready();
 });
 
-Meteor.publish('marketProducts', function MarketProducts(key) {
-  check(key, String);
-  if (this.userId) {
-    return MarketsOfferProductsCollection.find({
-      marketName: key,
-    });
-  }
+Meteor.publish('marketProducts', function MarketProducts(marketName) {
+  check(marketName, String);
+  if (this.userId) return MarketsOfferProductsCollection.find({ marketName });
   this.ready();
 });
 
