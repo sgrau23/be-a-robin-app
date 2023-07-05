@@ -47,7 +47,7 @@ export function CustomerFooterNavbar() {
     />,
     <FooterNavIcon
       iconComponent={<PersonIcon fontSize="medium" color="secondary" />}
-      route="/profile"
+      route="/customerPreferences"
       text="Perfil"
       key="perfil"
     />,

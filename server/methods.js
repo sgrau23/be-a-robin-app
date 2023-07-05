@@ -12,7 +12,9 @@ import {
   OptimizedPurchaseCollection, ShoppingCartCollection,
   HistoricalShoppingCartCollection,
 } from '../imports/db/collections';
-import { getProductProposal } from './inuba';
+import {
+  getProductProposal, intolerances, products, productsSuperfamilies,
+} from './inuba';
 
 const { settings } = Meteor;
 
@@ -259,21 +261,38 @@ Meteor.methods({
       { multi: true },
     );
   },
-  'purchaseOptimizer.storePreferences': (dislikes, diet, _id) => {
-    check(dislikes, Array);
+  'purchaseOptimizer.storePreferences': (diet, selectedDislikes, selectedIntolerances, _id) => {
+    check(diet, Number);
+    check(selectedDislikes, Array);
+    check(selectedIntolerances, Array);
     check(_id, String);
-    check(diet, String);
     Meteor.users.update(
       { _id },
       {
         $set: {
-          'profile.purchaseOptimizerPreferences': {
-            dislikes,
+          'profile.preferences.optimizerData': {
             diet,
+            selectedIntolerances,
+            selectedDislikes,
           },
         },
       },
     );
+  },
+  'user.storePreferences': (preferences, _id) => {
+    check(preferences, Object);
+    check(_id, String);
+    Meteor.users.update(
+      { _id },
+      {
+        $set: {
+          'profile.preferences': {
+            ...preferences,
+          },
+        },
+      },
+    );
+    return true;
   },
   'purchaseOptimizer.optimize': (optimizerPreferences, _id) => {
     check(optimizerPreferences, Object);
@@ -395,4 +414,7 @@ Meteor.methods({
     }
     return undefined;
   },
+  'inuba.getIntolerances': () => intolerances,
+  'inuba.getProducts': () => products,
+  'inuba.getProductsSuperfamilies': () => productsSuperfamilies,
 });

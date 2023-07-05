@@ -153,7 +153,6 @@ export function ShoppingList() {
                   md={12}
                   lg={12}
                   key={idx}
-
                 >
                   <ProductCard product={product.product} shoppingView />
                 </Grid>

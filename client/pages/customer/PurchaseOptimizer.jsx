@@ -5,7 +5,7 @@ import {
   Button, AppBar, Box, Backdrop, CircularProgress,
 } from '@mui/material';
 import { set } from 'lodash';
-import { OptimizerPreferencesForm } from '../../components/OptimizerPreferencesForm';
+import { OptimizerPreferencesForm } from '../../components/optimizer/OptimizerPreferencesForm';
 import { OptimizerPurchaseList } from '../../components/OptimizerPurchaseList';
 
 export function PurchaseOptimizer() {

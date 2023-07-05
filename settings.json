@@ -30,74 +30,74 @@
         },
         "diets": [
           {
-            "id": "no_preferences",
+            "id": "11",
             "img": "no_preferences_diet.png",
             "name": "Sin preferencias"
           },
           {
-            "id": "mediterranean",
+            "id": "8",
             "img": "mediterranean_diet.png",
             "name": "Mediterránea"
           },
           {
-            "id": "pescatarian",
+            "id": "10",
             "img": "pescatarian_diet.png",
             "name": "Pescatariana"
           },
           {
-            "id": "vegetarian",
+            "id": "3",
             "img": "vegetarian_diet.png",
             "name": "Vegetariana"
           },
           {
-            "id": "vegan",
+            "id": "2",
             "img": "vegan_diet.png",
             "name": "Vegana"
           }
         ],
         "dislikeCategories": [
           {   
-              "id": "grains",
+              "id": "1",
               "name": "Cereales y derivados",
               "img": "grains.png"
           },
           {   
-              "id": "eggs",
+              "id": "2",
               "name": "Huevos y lácteos",
               "img": "eggs.png"
           },
           {   
-              "id": "meat",
+              "id": "3",
               "name": "Carne y derivados",
               "img": "meat.png"
           },
           {   
-              "id": "fruits",
+              "id": "4",
               "name": "Frutas",
               "img": "fruits.png"
           },
           {   
-              "id": "vegetables",
+              "id": "5",
               "name": "Verduras y hortalizas",
               "img": "vegetables.png"
           },
           {   
-              "id": "oils",
+              "id": "6",
               "name": "Grasas y aceites",
               "img": "oils.png"
           },
           {   
-              "id": "fish",
+              "id": "9",
               "name": "Pescados y mariscos",
               "img": "fish.png"
           },
           {   
-              "id": "legumes",
+              "id": "12",
               "name": "Legumbres y derivados",
               "img": "legumes.png"
           },
           {   
-              "id": "species",
+              "id": "14",
               "name": "Especias y salsas",
               "img": "sauces.png"
           }   
