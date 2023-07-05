@@ -37,7 +37,13 @@ export function Login() {
   };
 
   return (
-    <>
+    <Box
+      sx={{
+        backgroundColor: '#ffff',
+        height: '100vh',
+        maxHeight: '100%',
+      }}
+    >
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={loading}
@@ -76,7 +82,7 @@ export function Login() {
         </Grid>
       </Box>
 
-      <Box sx={{ paddingY: '10%' }}>
+      <Box sx={{ padding: '5%' }}>
         <FormControl required fullWidth>
           <Grid container spacing={2} alignItems="center" textAlign="center">
             <Grid item xs={12}>
@@ -143,15 +149,15 @@ export function Login() {
               >
                 <RoundedButton
                   variant="contained"
-                  color="whiteButton"
+                  color="grayButton"
                 >
                   {t('Crear cuenta nueva')}
                 </RoundedButton>
               </RouteLink>
             </Grid>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <Link
-                to=""
+                to="/"
                 underline="always"
                 sx={{
                   color: '#3C6435',
@@ -159,10 +165,10 @@ export function Login() {
               >
                 {t('¿Has olvidado la contraseña?')}
               </Link>
-            </Grid>
+            </Grid> */}
           </Grid>
         </FormControl>
       </Box>
-    </>
+    </Box>
   );
 }

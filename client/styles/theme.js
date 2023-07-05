@@ -21,5 +21,6 @@ export const mainTheme = createTheme({
       main: '#FFFFFF',
     },
     whiteButton: createColor('#FFFFFF'),
+    grayButton: createColor('#e6e6e6'),
   },
 });

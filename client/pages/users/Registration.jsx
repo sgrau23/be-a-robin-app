@@ -16,7 +16,7 @@ import { Typography } from '@material-ui/core';
 import { useTheme } from '@mui/material/styles';
 import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded';
 import {
-  WhiteTypography, TextInput, RoundedButton, GreenTypography,
+  WhiteTypography, TextInput, RoundedButton,
 } from '../../styles/styledComponents';
 
 const ITEM_HEIGHT = 48;
@@ -71,9 +71,7 @@ export function Registration() {
   };
   // User common data
   const [userCommonData, setUserCommonData] = useState({
-    country: '',
-    city: '',
-    address: '',
+
   });
   const onHandleUserCommonData = (e) => {
     setUserCommonData({ ...userCommonData, [e.target.name]: e.target.value });
@@ -83,6 +81,7 @@ export function Registration() {
     name: '',
     firstName: '',
     postalCode: undefined,
+    age: undefined,
     // secondName: '',
     // diet: '',
   });
@@ -99,6 +98,8 @@ export function Registration() {
     categories: [],
     image: undefined,
     eco: 'no',
+    city: '',
+    address: '',
   });
   const onHandleMarketData = (e) => {
     setMarketData({ ...marketData, [e.target.name]: e.target.value });
@@ -153,7 +154,13 @@ export function Registration() {
   };
 
   return (
-    <>
+    <Box
+      sx={{
+        backgroundColor: ' #ffff',
+        // height: '100vh',
+        maxHeight: '100%',
+      }}
+    >
       <Backdrop
         sx={{ color: '#fff', zIndex: (th) => th.zIndex.drawer + 1 }}
         open={loading}
@@ -201,9 +208,9 @@ export function Registration() {
             }}
           >
             <Grid item xs={12}>
-              <WhiteTypography variant="h6" align="left">
+              <Typography variant="h6" align="left">
                 {t('Datos cuenta usuario:')}
-              </WhiteTypography>
+              </Typography>
             </Grid>
             <Grid item xs={12}>
               <TextInput
@@ -291,11 +298,11 @@ export function Registration() {
             </Grid>
             <Grid item xs={12}>
               <FormControl>
-                <FormLabel>
-                  <WhiteTypography variant="h6" align="left">
-                    {t('Tipo de cuenta:')}
-                  </WhiteTypography>
-                </FormLabel>
+                {/* <FormLabel> */}
+                <Typography sx={{ color: 'black' }} variant="h6" align="left">
+                  {t('Tipo de cuenta:')}
+                </Typography>
+                {/* </FormLabel> */}
                 <RadioGroup row>
                   <FormControlLabel
                     color="red"
@@ -330,9 +337,9 @@ export function Registration() {
               }}
             >
               <Grid item xs={12}>
-                <WhiteTypography variant="h6" align="left">
+                <Typography variant="h6" align="left">
                   {t(`Datos cuenta ${userData.userType}:`)}
-                </WhiteTypography>
+                </Typography>
               </Grid>
               <Grid item xs={12}>
                 <TextInput
@@ -358,42 +365,6 @@ export function Registration() {
                   required
                 />
               </Grid>
-              {/* <Grid item xs={12}>
-                <TextInput
-                  label={t('Segundo apellido')}
-                  variant="filled"
-                  name="secondName"
-                  type="text"
-                  autoComplete="secondName"
-                  onChange={onHandleCustomerData}
-                  fullWidth
-                  required
-                />
-              </Grid> */}
-              <Grid item xs={12}>
-                <TextInput
-                  label={t('País')}
-                  variant="filled"
-                  name="country"
-                  type="text"
-                  autoComplete="country"
-                  onChange={onHandleUserCommonData}
-                  fullWidth
-                  required
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextInput
-                  label={t('Ciudad')}
-                  variant="filled"
-                  name="city"
-                  type="text"
-                  autoComplete="city"
-                  onChange={onHandleUserCommonData}
-                  fullWidth
-                  required
-                />
-              </Grid>
               <Grid item xs={12}>
                 <TextInput
                   label={t('Código postal')}
@@ -401,19 +372,19 @@ export function Registration() {
                   name="postalCode"
                   type="number"
                   autoComplete="postalCode"
-                  onChange={onHandleUserCommonData}
+                  onChange={onHandleCustomerData}
                   fullWidth
                   required
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextInput
-                  label={t('Dirección')}
+                  label={t('Años')}
                   variant="filled"
-                  name="address"
-                  type="text"
-                  autoComplete="address"
-                  onChange={onHandleUserCommonData}
+                  name="age"
+                  type="number"
+                  autoComplete="age"
+                  onChange={onHandleCustomerData}
                   fullWidth
                   required
                 />
@@ -466,9 +437,9 @@ export function Registration() {
               }}
             >
               <Grid item xs={12}>
-                <WhiteTypography variant="h6" align="left">
+                <Typography variant="h6" align="left">
                   {t(`Datos cuenta ${userData.userType}:`)}
-                </WhiteTypography>
+                </Typography>
               </Grid>
 
               <Grid
@@ -532,18 +503,6 @@ export function Registration() {
                   type="text"
                   autoComplete="marketName"
                   onChange={onHandleMarketData}
-                  fullWidth
-                  required
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextInput
-                  label={t('País')}
-                  variant="filled"
-                  name="country"
-                  type="text"
-                  autoComplete="country"
-                  onChange={onHandleUserCommonData}
                   fullWidth
                   required
                 />
@@ -640,7 +599,7 @@ export function Registration() {
             <Grid item xs={6}>
               <RoundedButton
                 variant="contained"
-                color="whiteButton"
+                color="grayButton"
                 onClick={() => { setOpenConfirmationDialog(true); }}
               >
                 {t('Atrás')}
@@ -684,6 +643,6 @@ export function Registration() {
           </Grid>
         </form>
       </Box>
-    </>
+    </Box>
   );
 }

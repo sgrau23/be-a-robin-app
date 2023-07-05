@@ -171,7 +171,7 @@ Accounts.registerLoginHandler(service, (options) => {
         given_name: accessTokenInfo.given_name,
         family_name: accessTokenInfo.family_name,
         email: accessTokenInfo.email,
-        purchaseOptimizerPreferences: (user.length === 0 ? undefined : user[0].profile.purchaseOptimizerPreferences),
+        preferences: (user.length === 0 ? undefined : user[0].profile.preferences),
         image: userPhoto[0].image,
         savings: {
           currentMonthsavings: 0,
