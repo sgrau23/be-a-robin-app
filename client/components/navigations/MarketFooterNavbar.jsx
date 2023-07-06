@@ -3,7 +3,6 @@ import {
   AppBar, Grid, Button, CardActions, Dialog,
   DialogTitle, DialogContent, FormControl, InputLabel,
   Select, MenuItem, InputAdornment, Alert, Fab,
-  FormControlLabel, FormGroup, Checkbox,
 } from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import HomeIcon from '@mui/icons-material/Home';
@@ -68,7 +67,7 @@ export function MarketFooterNavbar() {
     />,
     <FooterNavIcon
       iconComponent={<PersonIcon fontSize="medium" color="secondary" />}
-      route="/profile"
+      route="/marketPreferences"
       text="Perfil"
       key="perfil"
     />,
@@ -98,13 +97,15 @@ export function MarketFooterNavbar() {
       },
     );
     setAddError(false);
+
     Meteor.call(
       `products.${(productData.offerType === 'offer' ? 'createOffer' : 'createLastMinute')}`,
       data,
-      Meteor.user().profile.attributes.marketName,
+      Meteor.user().profile.preferences.name,
       (error) => {
-        if (error) setAddError(true);
-        else {
+        if (error) {
+          setAddError(true);
+        } else {
           setOpenAddModal(false);
           setProductData(defaultProductData);
         }
@@ -126,7 +127,6 @@ export function MarketFooterNavbar() {
     <>
       <Dialog
         open={openAddModal}
-        // TransitionComponent={Transition}
         keepMounted
       >
         <DialogTitle>
@@ -226,15 +226,15 @@ export function MarketFooterNavbar() {
                     variant="filled"
                   >
                     {(
-                        categories.map((category) => (
-                          <MenuItem
-                            id={category.id}
-                            value={category.id}
-                            key={category.id}
-                          >
-                            {t(category.name)}
-                          </MenuItem>
-                        ))
+                      Object.entries(categories).map(([id, name]) => (
+                        <MenuItem
+                          id={id}
+                          value={id}
+                          key={id}
+                        >
+                          {t(name)}
+                        </MenuItem>
+                      ))
                     )}
                   </Select>
 

@@ -1,58 +1,73 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Typography, Grid, Fab,
-  Button, Box, Alert,
+  Typography, Grid, Fab, FormControl, InputLabel, Select, Chip,
+  Button, Box, Alert, FormControlLabel, FormGroup, Checkbox,
+  MenuItem,
 } from '@mui/material';
 import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded';
-import SettingsIcon from '@mui/icons-material/Settings';
+import { useTheme } from '@mui/material/styles';
 import {
   useHistory,
 } from 'react-router-dom';
-import { CustomerPreferencesTopNavbar } from '../../components/navigations/CustomerPreferencesTopNavbar';
-import { CustomerFooterNavbar } from '../../components/navigations/CustomerFooterNavbar';
-import { OptimizerPreferencesForm } from '../../components/optimizer/OptimizerPreferencesForm';
+import { MarketPreferencesTopNavbar } from '../../components/navigations/MarketPreferencesTopNavbar';
+import { MarketFooterNavbar } from '../../components/navigations/MarketFooterNavbar';
 import { TextInput } from '../../styles/styledComponents';
 
-export function CustomerPreferences() {
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+function getStyles(name, personName, theme) {
+  return {
+    fontWeight:
+      personName.indexOf(name) === -1
+        ? theme.typography.fontWeightRegular
+        : theme.typography.fontWeightMedium,
+  };
+}
+
+export function MarketPreferences() {
   const { t } = useTranslation();
-  const [openOptimizerPreferencesForm, setOpenOptimizerPreferencesForm] = useState(false);
+  const [categories, setCategories] = useState([]);
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
   const history = useHistory();
+  const theme = useTheme();
+
+  Meteor.call('products.categories', (err, result) => {
+    if (err) console.log(err);
+    else setCategories(result);
+  });
 
   const user = Meteor.user();
   // const preferences = {
-  //   name: ((
-  //     user.profile.preferences && user.profile.preferences.name
-  //   ) ? user.profile.preferences.name : user.profile.attributes.name),
-  //   image: ((
-  //     user.profile.preferences && user.profile.preferences.image
-  //   ) ? user.profile.preferences.image : undefined),
-  //   surname: ((
-  //     user.profile.preferences && user.profile.preferences.surname
-  //   ) ? user.profile.preferences.surname : user.profile.name),
-  //   postalCode: ((
-  //     user.profile.preferences && user.profile.preferences.potalCode
-  //   ) ? user.profile.preferences.postalCode : user.profile.attributes.postalCode),
-  //   age: ((
-  //     user.profile.preferences && user.profile.preferences.age
-  //   ) ? user.profile.preferences.age : user.profile.attributes.age),
-  //   diet: ((
-  //     user.profile.preferences && user.profile.preferences.diet
-  //   ) ? user.profile.preferences.diet : 11),
-  //   dislikes: ((
-  //     user.profile.preferences && user.profile.preferences.dislikes
-  //   ) ? user.profile.preferences.dislikes : []),
-  //   intolerances: ((
-  //     user.profile.preferences && user.profile.preferences.intolerances
-  //   ) ? user.profile.preferences.intolerances : []),
+  //   address: ((
+  //     user.profile.preferences && user.profile.preferences.address
+  //   ) ? user.profile.preferences.address : user.profile.attributes.address),
+  //   image: (user.profile.preferences ? user.profile.image : undefined),
+  //   marketName: ((
+  //     user.profile.preferences && user.profile.preferences.marketName
+  //   ) ? user.profile.preferences.marketName : user.profile.attributs.marketName),
+  //   categories: ((
+  //     user.profile.preferences && user.profile.preferences.categories
+  //   ) ? user.profile.preferences.categories.split(',') : user.profile.attributes.categories.split(',')),
+  //   eco: ((
+  //     user.profile.preferences && user.profile.preferences.eco
+  //   ) ? user.profile.preferences.eco : user.profile.attributes.eco),
   // };
 
-  const [customerPreferences, setCustomerPreferences] = useState(user.profile.preferences);
+  const [marketPreferences, setMarketPreferences] = useState(user.profile.preferences);
 
-  const onHandleCustomerPreferences = (e) => {
-    setCustomerPreferences({ ...customerPreferences, [e.target.name]: e.target.value });
+  const onHandleMarketPreferences = (e) => {
+    setMarketPreferences({ ...marketPreferences, [e.target.name]: e.target.value });
   };
 
   const onHandleUploadClick = (e) => {
@@ -60,12 +75,8 @@ export function CustomerPreferences() {
     const file = e.target.files[0];
     reader.readAsDataURL(file);
     reader.onload = () => {
-      setCustomerPreferences({ ...customerPreferences, image: reader.result });
+      setMarketPreferences({ ...marketPreferences, image: reader.result });
     };
-  };
-
-  const onHandleCloseOptimizerForm = () => {
-    setOpenOptimizerPreferencesForm(false);
   };
 
   const onHandleBack = () => {
@@ -73,10 +84,9 @@ export function CustomerPreferences() {
   };
 
   const onHandleSubmitPreferences = () => {
-    Meteor.call('user.storePreferences', customerPreferences, Meteor.user()._id, (err) => {
-      if (err) {
-        setError(true);
-      } else {
+    Meteor.call('user.storePreferences', marketPreferences, Meteor.user()._id, (err) => {
+      if (err) setError(true);
+      else {
         setError(false);
         setSuccess(true);
       }
@@ -92,15 +102,22 @@ export function CustomerPreferences() {
     }
   }, [success]);
 
+  const onHandleEco = (event) => {
+    marketPreferences.eco = (event.target.checked);
+    setMarketPreferences(marketPreferences);
+  };
+
+  const onHandleCategories = (event) => {
+    const {
+      target: { value },
+    } = event;
+    marketPreferences.categories = (typeof value === 'string' ? value.split(',') : value);
+    setMarketPreferences(marketPreferences);
+  };
+
   return (
     <>
-      <CustomerPreferencesTopNavbar user={user} />
-      <OptimizerPreferencesForm
-        open={openOptimizerPreferencesForm}
-        onHandleClose={onHandleCloseOptimizerForm}
-        preferences={customerPreferences}
-        setCustomerPreferences={setCustomerPreferences}
-      />
+      <MarketPreferencesTopNavbar user={user} />
       <Box
         maxWidth
         sx={{
@@ -150,13 +167,13 @@ export function CustomerPreferences() {
               lg={12}
             >
               <TextInput
-                label={t('Nombre')}
+                label={t('Nombre mercado')}
                 variant="filled"
                 name="name"
                 type="text"
                 autoComplete=""
-                onChange={onHandleCustomerPreferences}
-                value={customerPreferences.name}
+                onChange={onHandleMarketPreferences}
+                value={marketPreferences.name}
                 fullWidth
                 required
               />
@@ -169,13 +186,13 @@ export function CustomerPreferences() {
               lg={12}
             >
               <TextInput
-                label={t('Primer apellido')}
+                label={t('Dirección')}
                 variant="filled"
-                name="surname"
+                name="address"
                 type="text"
                 autoComplete=""
-                onChange={onHandleCustomerPreferences}
-                value={customerPreferences.surname}
+                onChange={onHandleMarketPreferences}
+                value={marketPreferences.address}
                 fullWidth
                 required
               />
@@ -187,17 +204,40 @@ export function CustomerPreferences() {
               md={12}
               lg={12}
             >
-              <TextInput
-                label={t('Código postal')}
-                variant="filled"
-                name="postalCode"
-                type="number"
-                autoComplete=""
-                onChange={onHandleCustomerPreferences}
-                value={customerPreferences.postalCode}
-                fullWidth
-                required
-              />
+              <FormControl fullWidth>
+                <InputLabel id="category-select-label">{t('Categorías comercio')}</InputLabel>
+                <Select
+                  labelId="category-select-label"
+                  multiple
+                  value={marketPreferences.categories}
+                  label={t('Categorías comercio')}
+                  onChange={onHandleCategories}
+                  name="categories"
+                  variant="filled"
+                  renderValue={(selected) => (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip key={categories[value]} label={categories[value]} />
+                      ))}
+                    </Box>
+                  )}
+                  MenuProps={MenuProps}
+                >
+                  {(
+                      Object.entries(categories).map(([id, name]) => (
+                        <MenuItem
+                          id={id}
+                          value={id}
+                          key={id}
+                          style={getStyles(id, marketPreferences.categories, theme)}
+                        >
+                          {t(name)}
+                        </MenuItem>
+                      ))
+                    )}
+                </Select>
+
+              </FormControl>
             </Grid>
             <Grid
               item
@@ -206,17 +246,12 @@ export function CustomerPreferences() {
               md={12}
               lg={12}
             >
-              <TextInput
-                label={t('Edad')}
-                variant="filled"
-                name="age"
-                type="number"
-                autoComplete=""
-                onChange={onHandleCustomerPreferences}
-                value={customerPreferences.age}
-                fullWidth
-                required
-              />
+              <FormGroup>
+                <FormControlLabel
+                  control={<Checkbox checked={marketPreferences.eco} onClick={onHandleEco} />}
+                  label={t('Ecológico')}
+                />
+              </FormGroup>
             </Grid>
             <Grid
               item
@@ -247,95 +282,6 @@ export function CustomerPreferences() {
                 </label>
               </Box>
 
-            </Grid>
-          </Grid>
-        </Box>
-      </Box>
-      <Box
-        maxWidth
-        sx={{
-          backgroundColor: 'secondary.main',
-          width: '100%',
-        }}
-        style={{
-          maxWidth: '100%',
-        }}
-      >
-        <Box
-          sx={{
-            padding: '8px',
-          }}
-        >
-          <Grid
-            container
-            columns={{
-              xs: 12, sm: 12, md: 12, lg: 12,
-            }}
-            spacing={{
-              xs: 2, sm: 2, md: 2, lg: 2,
-            }}
-          >
-            <Grid
-              item
-              xs={12}
-              sm={12}
-              md={12}
-              lg={12}
-            >
-              <Typography
-                sx={{
-                  fontWeight: 'bold',
-                  fontSize: 20,
-                }}
-              >
-                {t('Datos optimizador:')}
-              </Typography>
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={12}
-              md={12}
-              lg={12}
-              justifyContent="flex-end"
-              display="flex"
-            >
-              <Box
-                sx={{
-                  borderRadius: 5,
-                  backgroundColor: '#e6e6e6',
-                  boxShadow: 5,
-                  width: '90px',
-                  marginBottom: '10px',
-                }}
-                style={{ textDecoration: 'none', color: 'black' }}
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                onClick={() => setOpenOptimizerPreferencesForm(true)}
-              >
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  flexWrap: 'wrap',
-                  padding: '5px',
-                }}
-                >
-                  <SettingsIcon
-                    sx={{
-                      height: '15px',
-                      width: '15px',
-                    }}
-                  />
-                  <Typography
-                    sx={{
-                      fontSize: 10,
-                    }}
-                  >
-                    {t('Modificar')}
-                  </Typography>
-                </div>
-              </Box>
             </Grid>
           </Grid>
         </Box>
@@ -435,8 +381,7 @@ export function CustomerPreferences() {
           </Grid>
         </Grid>
       </Box>
-
-      <CustomerFooterNavbar />
+      <MarketFooterNavbar />
     </>
 
   );

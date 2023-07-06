@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 import {
   Grid, Backdrop, CircularProgress,
@@ -26,7 +26,7 @@ export function CustomerDashboard() {
       const markets = [];
       const eco = [];
       data.forEach((element) => {
-        if (element.profile.attributes.eco === 'yes') eco.push(element);
+        if (element.profile.preferences.eco) eco.push(element);
         else markets.push(element);
       });
       setMarketsList(markets);
@@ -43,9 +43,11 @@ export function CustomerDashboard() {
     }
   }, []);
 
-  useEffect(() => {
-    console.log(marketTypeSelected);
-  }, [marketTypeSelected]);
+  console.log(marketsList);
+
+  // useEffect(() => {
+  //   console.log(marketTypeSelected);
+  // }, [marketTypeSelected]);
 
   return (
     <>
@@ -79,17 +81,17 @@ export function CustomerDashboard() {
           </Grid>
           {
             marketsList && marketTypeSelected === 'frescos' && (
-              marketsList.map((market) => <MarketCard data={market} key={market.profile.attributes.marketName} type="markets" />)
+              marketsList.map((market) => <MarketCard data={market} id={market.profile.preferences.name} type="markets" />)
             )
           }
           {
             ecoList && marketTypeSelected === 'eco' && (
-              ecoList.map((market) => <MarketCard data={market} key={market.profile.attributes.marketName} type="eco" />)
+              ecoList.map((market) => <MarketCard data={market} id={market.profile.preferences.name} type="eco" />)
             )
           }
           {
             supermarketsList && marketTypeSelected === 'secos' && (
-              supermarketsList.map((market) => <MarketCard data={market} key={market.profile.attributes.marketName} type="supermarkets" />)
+              supermarketsList.map((market) => <MarketCard data={market} id={market.key} type="supermarkets" />)
             )
           }
         </Grid>

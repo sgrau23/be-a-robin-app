@@ -8,12 +8,15 @@ import {
 import Toolbar from '@mui/material/Toolbar';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
-export function CustomerPreferencesTopNavbar({ user }) {
+export function MarketPreferencesTopNavbar({ user }) {
   const history = useHistory();
+
   const onHandleLogout = () => {
     Meteor.logout();
     history.push('/');
   };
+
+  // Translations
   return (
     <AppBar
       sx={{
@@ -51,11 +54,11 @@ export function CustomerPreferencesTopNavbar({ user }) {
             <Typography
               sx={{
                 fontWeight: 'bold',
-                fontSize: 30,
+                fontSize: 20,
                 color: 'black',
               }}
             >
-              { `${user.profile.attributes.name} ${user.profile.name}` }
+              { `${user.profile.preferences.name}` }
             </Typography>
           </Grid>
           <Grid
@@ -69,7 +72,7 @@ export function CustomerPreferencesTopNavbar({ user }) {
               sx={{
                 boxShadow: 5,
               }}
-              src={(user.profile.preferences ? user.profile.preferences.image : undefined)}
+              src={user.profile.preferences.image}
             />
           </Grid>
           <Grid

@@ -24,7 +24,7 @@ const defaultNewChat = {
 
 export function Chat() {
   const { userType } = Meteor.user().profile.attributes;
-  const { name } = Meteor.user().profile;
+  const { name } = Meteor.user().profile.preferences;
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [conversations, setConversations] = useState([]);
@@ -133,7 +133,7 @@ export function Chat() {
                     variant="body2"
                     color="text.primary"
                   >
-                    {/* {t('No tienes conversaciones')} */}
+                    {t('No tienes conversaciones')}
                   </Typography>
                 </ListItemText>
 
@@ -242,8 +242,8 @@ export function Chat() {
                           >
                             {(
                                 markets.map((market) => (
-                                  <MenuItem value={`${market.profile.attributes.marketName}_${market._id}`} id={market._id} key={market._id}>
-                                    {market.profile.attributes.marketName}
+                                  <MenuItem value={`${market.profile.preferences.name}_${market._id}`} id={market._id} key={market._id}>
+                                    {market.profile.preferences.name}
                                   </MenuItem>
                                 ))
                             )}

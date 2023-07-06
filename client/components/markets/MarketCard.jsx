@@ -9,24 +9,25 @@ import {
   MarketsLastMinuteProductsCollection,
 } from '../../../imports/db/collections';
 
-export function MarketCard({ data, type }) {
+export function MarketCard({ data, id, type }) {
   const { t } = useTranslation();
   const [totalLastMinuteProducts, setTotalLastMinuteProducts] = useState(0);
 
   // Get last minute market products
   useTracker(() => {
     if (type !== 'supermarkets') {
-      const handler = Meteor.subscribe('marketLastMinuteProducts', data.profile.attributes.marketName);
+      const handler = Meteor.subscribe('marketLastMinuteProducts', data.profile.preferences.name);
       if (!handler.ready()) setTotalLastMinuteProducts(0);
       else {
         const total = MarketsLastMinuteProductsCollection.find({
-          marketName: data.profile.attributes.marketName,
+          marketName: data.profile.preferences.name,
         }).fetch().length;
         setTotalLastMinuteProducts(total);
       }
     }
   }, []);
-
+  const name = (type === 'supermarkets' ? data.name : data.profile.preferences.name);
+  const image = (type === 'supermarkets' ? data.image : data.profile.preferences.image);
   return (
     <Grid
       item
@@ -36,7 +37,7 @@ export function MarketCard({ data, type }) {
       lg={12}
     >
       <Link
-        to={`/${type}/${data.profile.attributes.marketName}`}
+        to={`/${type}/${id}`}
         style={{ color: 'inherit', textDecoration: 'inherit' }}
       >
         <Box
@@ -73,7 +74,7 @@ export function MarketCard({ data, type }) {
                   sx={{ marginRight: '10px', float: 'right' }}
                 />
                 <img
-                  src={data.profile.image}
+                  src={image}
                   alt=""
                   style={{
                     height: '150px',
@@ -95,7 +96,7 @@ export function MarketCard({ data, type }) {
                     fontSize: 12,
                   }}
                 >
-                  {t(data.profile.attributes.marketName)}
+                  {t(name)}
                 </Typography>
               </Grid>
               <Grid

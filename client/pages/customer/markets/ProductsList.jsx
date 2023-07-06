@@ -53,19 +53,18 @@ export function ProductList() {
       if (type === 'supermarkets') {
         data = SupermarketsCollection.find(
           {
-            'profile.attributes.marketName': id,
+            key: id,
           },
         ).fetch().pop();
       } else {
         data = Meteor.users.find(
           {
             'profile.attributes.userType': 'comercio',
-            'profile.attributes.marketName': id,
-            'profile.attributes.eco': (type === 'eco' ? 'yes' : 'no'),
+            'profile.preferences.name': id,
+            'profile.preferences.eco': (type === 'eco'),
           },
         ).fetch().pop();
       }
-      console.log(data);
       setMarkeData(data);
     }
   }, []);
@@ -73,7 +72,7 @@ export function ProductList() {
   // Get current market products
   useTracker(() => {
     let handler;
-    if (type === 'supermarkets') handler = Meteor.subscribe('supermarketProducts', id, parseInt(Meteor.user().profile.attributes.postalCode, 10));
+    if (type === 'supermarkets') handler = Meteor.subscribe('supermarketProducts', id, parseInt(Meteor.user().profile.preferences.postalCode, 10));
     else handler = Meteor.subscribe('marketProducts', id);
     if (!handler.ready()) setProducts();
     else {
@@ -151,7 +150,7 @@ export function ProductList() {
                 }}
               >
                 <img
-                  src={marketData.profile.image}
+                  src={(type === 'supermarkets' ? marketData.image : marketData.profile.preferences.image)}
                   alt=""
                   style={{
                     height: '150px',
@@ -204,7 +203,7 @@ export function ProductList() {
                       fontWeight: 'bold',
                     }}
                   >
-                    {t(marketData.profile.attributes.marketName)}
+                    {t((type === 'supermarkets' ? marketData.name : marketData.profile.preferences.name))}
                   </Typography>
                   <Typography
                     sx={{
@@ -363,14 +362,14 @@ export function ProductList() {
             >
               {
                 products && offerTypeSelected === 'offer' && (
-                  products.map((product, idx) => (
+                  products.map((product) => (
                     <Grid
                       item
                       xs={12}
                       sm={12}
                       md={12}
                       lg={12}
-                      key={idx}
+                      key={product.name}
                     >
                       <ProductCard product={product} />
                     </Grid>

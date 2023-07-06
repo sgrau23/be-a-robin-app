@@ -31,16 +31,16 @@ export const getAccessToken = () => {
   return response.access_token;
 };
 
-const fillAttributes = (userData, userCommonData, userTypeData) => {
+const fillAttributes = (userData, userTypeData) => {
   let result = {};
-  result = Object.assign(result, userData, userCommonData, userTypeData);
+  result = Object.assign(result, userData, userTypeData);
   return result;
 };
 
-export const createUser = (userData, userCommonData, userTypeData) => {
+export const createUser = (userData, userTypeData) => {
   const future = new Future();
   const accessToken = getAccessToken();
-  const attributes = fillAttributes(userData, userCommonData, userTypeData);
+  const attributes = fillAttributes(userData, userTypeData);
   const { image } = attributes;
   delete attributes.image;
 
@@ -121,6 +121,24 @@ export const getUserAttributes = (email) => {
   return attributes;
 };
 
+const setPreferences = (attributes, image) => {
+  if (attributes.userType === 'comercio') {
+    return {
+      address: attributes.address,
+      categories: attributes.categories.split(',').map((e) => parseInt(e, 10)),
+      eco: attributes.eco === '1',
+      name: attributes.name,
+      image,
+    };
+  }
+  return {
+    name: attributes.name,
+    surname: attributes.name,
+    postalCode: attributes.postalCode,
+    age: attributes.age,
+  };
+};
+
 Accounts.registerLoginHandler(service, (options) => {
   if (!options.openid || !options.email || !options.pass) return undefined;
   // Define required body
@@ -171,8 +189,7 @@ Accounts.registerLoginHandler(service, (options) => {
         given_name: accessTokenInfo.given_name,
         family_name: accessTokenInfo.family_name,
         email: accessTokenInfo.email,
-        preferences: (user.length === 0 ? undefined : user[0].profile.preferences),
-        image: userPhoto[0].image,
+        preferences: (user.length === 0 ? setPreferences(attributes, userPhoto[0].image) : user[0].profile.preferences),
         savings: {
           currentMonthsavings: 0,
           currentMonthPotentialSavings: 0,

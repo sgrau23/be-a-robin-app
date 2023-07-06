@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Backdrop, Grid, Divider, CircularProgress, FormControl, Box,
-  FormLabel, Avatar, Link, InputAdornment, IconButton, FormControlLabel, RadioGroup,
+  Avatar, Link, InputAdornment, IconButton, FormControlLabel, RadioGroup,
   Radio, InputLabel, Select, MenuItem, Alert, DialogTitle, DialogContentText,
   DialogContent, DialogActions, Dialog, Button, Chip, Fab, Checkbox, FormGroup,
 } from '@mui/material';
@@ -30,10 +30,10 @@ const MenuProps = {
   },
 };
 
-function getStyles(name, personName, theme) {
+function getStyles(id, categories, theme) {
   return {
     fontWeight:
-      personName.indexOf(name) === -1
+      categories.indexOf(id) === -1
         ? theme.typography.fontWeightRegular
         : theme.typography.fontWeightMedium,
   };
@@ -46,7 +46,11 @@ export function Registration() {
   const { t } = useTranslation();
   // Confirmation dialog variables
   const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState({});
+  Meteor.call('products.categories', (err, result) => {
+    if (err) console.log(err);
+    else setCategories(result);
+  });
   const onHandleCloseConfirmationDialog = () => {
     setOpenConfirmationDialog(false);
   };
@@ -69,13 +73,6 @@ export function Registration() {
     else if (e.target.name === 'pass2' && e.target.value === userData.pass) setPassword2ValidationError(false);
     else if (e.target.name === 'pass' && e.target.value === userData.pass2) setPassword2ValidationError(false);
   };
-  // User common data
-  const [userCommonData, setUserCommonData] = useState({
-
-  });
-  const onHandleUserCommonData = (e) => {
-    setUserCommonData({ ...userCommonData, [e.target.name]: e.target.value });
-  };
   // Customer user  data
   const [customerData, setCustomerData] = useState({
     name: '',
@@ -85,19 +82,15 @@ export function Registration() {
     // secondName: '',
     // diet: '',
   });
-  Meteor.call('products.categories', (error, result) => {
-    if (error) console.log(error);
-    else setCategories(result);
-  });
   const onHandleCustomerData = (e) => {
     setCustomerData({ ...customerData, [e.target.name]: e.target.value });
   };
   // Market user  data
   const [marketData, setMarketData] = useState({
-    marketName: '',
+    name: '',
     categories: [],
     image: undefined,
-    eco: 'no',
+    eco: '0',
     city: '',
     address: '',
   });
@@ -109,10 +102,11 @@ export function Registration() {
       target: { value },
     } = event;
     marketData.categories = (typeof value === 'string' ? value.split(',') : value);
+    setMarketData(marketData);
   };
 
   const onHandleEco = (event) => {
-    marketData.eco = (event.target.checked ? 'yes' : 'no');
+    marketData.eco = (event.target.checked ? '1' : '0');
   };
   // Loading page
   const [loading, setLoading] = useState(false);
@@ -121,11 +115,10 @@ export function Registration() {
     e.preventDefault();
     setLoading(true);
     if (userData.pass !== userData.pass2) return false;
-    marketData.marketCategories = marketData.categories.join(',');
+    marketData.categories = marketData.categories.join(',');
     Meteor.call(
       'users.createUser',
       userData,
-      userCommonData,
       (userData.userType === 'comercio' ? marketData : customerData),
       (error, result) => {
         if (error) {
@@ -157,7 +150,6 @@ export function Registration() {
     <Box
       sx={{
         backgroundColor: ' #ffff',
-        // height: '100vh',
         maxHeight: '100%',
       }}
     >
@@ -169,7 +161,6 @@ export function Registration() {
       </Backdrop>
       <Box sx={{ padding: '2%' }}>
         <form onSubmit={onHandleSubmit} action={<Link to="/" />}>
-          {/* <form> */}
           <Grid
             container
             direction="column"
@@ -298,11 +289,9 @@ export function Registration() {
             </Grid>
             <Grid item xs={12}>
               <FormControl>
-                {/* <FormLabel> */}
                 <Typography sx={{ color: 'black' }} variant="h6" align="left">
                   {t('Tipo de cuenta:')}
                 </Typography>
-                {/* </FormLabel> */}
                 <RadioGroup row>
                   <FormControlLabel
                     color="red"
@@ -392,37 +381,6 @@ export function Registration() {
             </Grid>
 
             <Divider />
-            {/* <Grid
-              container
-              spacing={2}
-              sx={{
-                paddingY: '3%',
-              }}
-            >
-              <Grid item xs={12}>
-                <WhiteTypography variant="h6" align="left">
-                  {t('Datos alimentación:')}
-                </WhiteTypography>
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel variant="filled">{t('Tipo de dieta')}</InputLabel>
-                  <Select
-                    value={customerData.diet}
-                    variant="filled"
-                    // sx={{ color: 'green' }}
-                    label={t('Tipo de dieta')}
-                    name="diet"
-                    onChange={onHandleCustomerData}
-                  >
-                    {
-                      Object.keys(diets).map((key) => <MenuItem key={key} value={key}>{t(diets[key])}</MenuItem>)
-                    }
-                  </Select>
-                </FormControl>
-              </Grid>
-
-            </Grid> */}
           </>
           )}
 
@@ -473,23 +431,23 @@ export function Registration() {
                     renderValue={(selected) => (
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                         {selected.map((value) => (
-                          <Chip key={value} label={value} />
+                          <Chip key={categories[value]} label={categories[value]} />
                         ))}
                       </Box>
                     )}
                     MenuProps={MenuProps}
                   >
                     {(
-                        categories.map((category) => (
-                          <MenuItem
-                            id={category.id}
-                            value={category.id}
-                            key={category.id}
-                            style={getStyles(category.name, marketData.categories, theme)}
-                          >
-                            {t(category.name)}
-                          </MenuItem>
-                        ))
+                      Object.entries(categories).map(([id, name]) => (
+                        <MenuItem
+                          id={id}
+                          value={id}
+                          key={id}
+                          style={getStyles(id, marketData.categories, theme)}
+                        >
+                          {t(name)}
+                        </MenuItem>
+                      ))
                     )}
                   </Select>
 
@@ -499,9 +457,9 @@ export function Registration() {
                 <TextInput
                   label={t('Nombre comercio')}
                   variant="filled"
-                  name="marketName"
+                  name="name"
                   type="text"
-                  autoComplete="marketName"
+                  autoComplete="name"
                   onChange={onHandleMarketData}
                   fullWidth
                   required
@@ -514,7 +472,7 @@ export function Registration() {
                   name="city"
                   type="text"
                   autoComplete="city"
-                  onChange={onHandleUserCommonData}
+                  onChange={onHandleMarketData}
                   fullWidth
                   required
                 />
@@ -526,7 +484,7 @@ export function Registration() {
                   name="address"
                   type="text"
                   autoComplete="address"
-                  onChange={onHandleUserCommonData}
+                  onChange={onHandleMarketData}
                   fullWidth
                   required
                 />
@@ -634,7 +592,6 @@ export function Registration() {
               <RoundedButton
                 variant="contained"
                 type="submit"
-                // onClick={onHandleSubmit}
                 color="primary"
               >
                 {t('Crear cuenta')}

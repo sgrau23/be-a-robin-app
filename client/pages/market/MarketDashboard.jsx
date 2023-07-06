@@ -34,7 +34,7 @@ const useStyles = makeStyles({
 
 export function MarketDashboard({ ...props }) {
   const { t } = useTranslation();
-  const id = Meteor.user().profile.attributes.marketName;
+  const id = Meteor.user().profile.preferences.name;
   const type = useHistory().location.pathname.split('/')[1];
   const [marketData, setMarkeData] = useState();
   const [products, setProducts] = useState();
@@ -61,19 +61,18 @@ export function MarketDashboard({ ...props }) {
       if (type === 'supermarkets') {
         data = SupermarketsCollection.find(
           {
-            'profile.attributes.marketName': id,
+            'profile.preferences.name': id,
           },
         ).fetch().pop();
       } else {
         data = Meteor.users.find(
           {
             'profile.attributes.userType': 'comercio',
-            'profile.attributes.marketName': id,
-            'profile.attributes.eco': (type === 'eco' ? 'yes' : 'no'),
+            'profile.preferences.name': id,
+            'profile.preferences.eco': Meteor.user().profile.preferences.eco,
           },
         ).fetch().pop();
       }
-      console.log(data);
       setMarkeData(data);
     }
   }, []);
@@ -81,7 +80,7 @@ export function MarketDashboard({ ...props }) {
   // Get current market products
   useTracker(() => {
     let handler;
-    if (type === 'supermarkets') handler = Meteor.subscribe('supermarketProducts', id, parseInt(Meteor.user().profile.attributes.postalCode, 10));
+    if (type === 'supermarkets') handler = Meteor.subscribe('supermarketProducts', id, parseInt(Meteor.user().profile.preferences.postalCode, 10));
     else handler = Meteor.subscribe((!isHistorical ? 'marketProducts' : 'marketsHistoricalOfferProducts'), id);
     if (!handler.ready()) setProducts();
     else {
@@ -123,12 +122,12 @@ export function MarketDashboard({ ...props }) {
 
   return (
     <>
-      <Backdrop
+      {/* <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={!marketData}
       >
         <CircularProgress color="inherit" />
-      </Backdrop>
+      </Backdrop> */}
       {
         marketData && (
           <Grid
@@ -159,7 +158,7 @@ export function MarketDashboard({ ...props }) {
                 }}
               >
                 <img
-                  src={marketData.profile.image}
+                  src={marketData.profile.preferences.image}
                   alt=""
                   style={{
                     height: '150px',
@@ -357,7 +356,7 @@ export function MarketDashboard({ ...props }) {
             >
               {
                 products && offerTypeSelected === 'offer' && (
-                  products.map((product, idx) => (
+                  products.map((product) => (
                     <Grid
                       item
                       xs={12}

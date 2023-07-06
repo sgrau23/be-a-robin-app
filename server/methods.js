@@ -68,20 +68,17 @@ const assignInubaProducts2CloserMarket = (inubaProducts, userId) => ({
 });
 
 Meteor.methods({
-  'users.createUser': async (userData, userCommonData, userTypeData) => {
+  'users.createUser': async (userData, userTypeData) => {
     check(userData, Object);
-    check(userCommonData, Object);
     check(userTypeData, Object);
     // User creation
-    const result = await createUser(userData, userCommonData, userTypeData);
+    const result = await createUser(userData, userTypeData);
     return result;
   },
   'products.categories': () => {
-    const categories = [];
+    const categories = {};
     settings.public.dislikeCategories.forEach((category) => {
-      categories.push({
-        name: category.name, id: category.id,
-      });
+      categories[category.id] = category.name;
     });
     return categories;
   },
@@ -374,12 +371,12 @@ Meteor.methods({
   },
   'shoppingCart.deleteUserProducts': (userId) => {
     check(userId, String);
-    const products = ShoppingCartCollection.find({ userId }).fetch();
+    const p = ShoppingCartCollection.find({ userId }).fetch();
     // Move to the historical collection
     HistoricalShoppingCartCollection.insert(
       {
         userId,
-        products,
+        products: p,
         timestamp: new Date(),
       },
     );

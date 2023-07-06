@@ -1,23 +1,15 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  AppBar, Badge, Typography, Menu, Button, Grid,
+  AppBar, Grid,
 } from '@mui/material';
-import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import PersonIcon from '@mui/icons-material/Person';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import MenuItem from '@mui/material/MenuItem';
-import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
 import {
-  Link, useHistory,
+  Link,
 } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import AddAlertIcon from '@mui/icons-material/AddAlert';
-import LocalGroceryStoreIcon from '@mui/icons-material/LocalGroceryStore';
 
 // const StyledFooter = styled.div`
 //   width: 100%;

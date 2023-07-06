@@ -32,6 +32,7 @@ import { ShoppingList } from './components/shopping/ShoppingList';
 import { HistoricalShoppingList } from './components/shopping/HistoricalShoppingList';
 import { HistoricalShoppingDetails } from './components/shopping/HistoricalShoppingDetails';
 import { CustomerPreferences } from './pages/customer/CustomerPreferences';
+import { MarketPreferences } from './pages/market/MarketPreferences';
 
 export function App() {
   const { loggedIn, userType } = useTracker(() => {
@@ -57,6 +58,8 @@ export function App() {
                         <>
                           <PropsRoute exact path="/" component={MarketDashboard} />
                           <PropsRoute exact path="/historicalOffers" component={MarketDashboard} />
+
+                          <PropsRoute exact path="/marketPreferences" component={MarketPreferences} />
 
                           {/* <PropsRoute exact path="/offers" component={Offers} />
                           <PropsRoute exact path="/offers/add" component={OffersAdd} />
