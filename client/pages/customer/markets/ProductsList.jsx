@@ -205,14 +205,28 @@ export function ProductList() {
                   >
                     {t((type === 'supermarkets' ? marketData.name : marketData.profile.preferences.name))}
                   </Typography>
-                  <Typography
-                    sx={{
-                    // fontWeight: 'bold',
-                      fontSize: 10,
-                    }}
-                  >
-                    Horario: 9:00h a 13:00h - 17:00h a 20:00h
-                  </Typography>
+                  {
+                    type !== 'supermarkets' && (
+                      <>
+                        <Typography
+                          sx={{
+                          // fontWeight: 'bold',
+                            fontSize: 10,
+                          }}
+                        >
+                          {`${t('Horario: ')}${marketData.profile.preferences.schedule}`}
+                        </Typography>
+                        <Typography
+                          sx={{
+                            // fontWeight: 'bold',
+                            fontSize: 10,
+                          }}
+                        >
+                          {marketData.profile.preferences.description}
+                        </Typography>
+                      </>
+                    )
+                  }
                   <Typography
                     sx={{
                     // fontWeight: 'bold',

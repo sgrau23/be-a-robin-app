@@ -15,7 +15,10 @@ const options = {
 };
 export function CustomerTopNavbar() {
   // const [totalProductsCart, setTotalProductsCart] = useState(0);
-  const [currentLocation, setCurrentLocation] = useState();
+  const { location } = Meteor.user().profile.preferences;
+  const [currentLocation, setCurrentLocation] = useState(
+    (location ? location.completeAddress : undefined),
+  );
   const [coordinates, setCoordinates] = useState();
   // Translations
   const { t } = useTranslation();
@@ -42,8 +45,8 @@ export function CustomerTopNavbar() {
   };
 
   useEffect(() => {
-    if (coordinates) {
-      Meteor.call('location.getAddress', coordinates, (err, result) => {
+    if (!location && coordinates) {
+      Meteor.call('location.getAddress', coordinates, Meteor.user()._id, (err, result) => {
         if (err) console.log(err);
         else setCurrentLocation(result);
       });

@@ -9,6 +9,28 @@ const {
   clientId, clientSecret, tokenUrl, usersUrl,
 } = Meteor.settings.openid;
 
+export const getCoordinates = (address) => {
+  const future = new Future();
+  fetch(
+    `https://geocode.maps.co/search?city=${address.city}&street=${address.street}&postalcode=${address.postalcode}`,
+    {
+      method: 'get',
+      // headers,
+    },
+  )
+    .then((data) => data.json())
+    .then((r) => future.return(r))
+    .catch((error) => { console.error(error); future.return(); });
+  const response = future.wait();
+  if (response.length > 0) {
+    return {
+      latitude: parseFloat(response[0].lat),
+      longitude: parseFloat(response[0].lon),
+    };
+  }
+  return undefined;
+};
+
 export const getAccessToken = () => {
   const future = new Future();
   // Define required body to obtain access token
@@ -121,19 +143,27 @@ export const getUserAttributes = (email) => {
   return attributes;
 };
 
-const setPreferences = (attributes, image) => {
+const setPreferences = (attributes, image, profile) => {
   if (attributes.userType === 'comercio') {
+    const coordinates = getCoordinates({
+      city: attributes.city, street: attributes.address, postalcode: attributes.postalcode,
+    });
     return {
       address: attributes.address,
+      postalcode: attributes.postalcode,
+      city: attributes.city,
       categories: attributes.categories.split(',').map((e) => parseInt(e, 10)),
       eco: attributes.eco === '1',
       name: attributes.name,
       image,
+      coordinates,
+      description: '',
+      schedule: '',
     };
   }
   return {
     name: attributes.name,
-    surname: attributes.name,
+    surname: profile.name,
     postalCode: attributes.postalCode,
     age: attributes.age,
   };
@@ -169,9 +199,11 @@ Accounts.registerLoginHandler(service, (options) => {
   // Decode JWT token
   const accessTokenInfo = jwtDecode(response.access_token);
   // Check user preferences
-
   const user = Meteor.users.find({ 'profile.email': accessTokenInfo.email }).fetch();
-  const userPhoto = UsersTemporalPhotoCollection.find({ email: accessTokenInfo.email }).fetch();
+  let userPhoto;
+  if (attributes.userType === 'comercio') {
+    userPhoto = UsersTemporalPhotoCollection.find({ email: accessTokenInfo.email }).fetch();
+  } else userPhoto = [{ image: undefined }];
   // Update or create user account
   const uid = Accounts.updateOrCreateUserFromExternalService(
     this.service,
@@ -189,7 +221,11 @@ Accounts.registerLoginHandler(service, (options) => {
         given_name: accessTokenInfo.given_name,
         family_name: accessTokenInfo.family_name,
         email: accessTokenInfo.email,
-        preferences: (user.length === 0 ? setPreferences(attributes, userPhoto[0].image) : user[0].profile.preferences),
+        preferences: (
+          (
+            user.length === 0
+          ) ? setPreferences(attributes, userPhoto[0].image, accessTokenInfo) : user[0].profile.preferences
+        ),
         savings: {
           currentMonthsavings: 0,
           currentMonthPotentialSavings: 0,

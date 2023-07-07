@@ -12,7 +12,6 @@ import {
 export function MarketCard({ data, id, type }) {
   const { t } = useTranslation();
   const [totalLastMinuteProducts, setTotalLastMinuteProducts] = useState(0);
-
   // Get last minute market products
   useTracker(() => {
     if (type !== 'supermarkets') {
@@ -116,7 +115,26 @@ export function MarketCard({ data, id, type }) {
                   {t('a 300 metros')}
                 </Typography>
               </Grid>
-
+              {
+                type !== 'supermarkets' && (
+                <Grid
+                  item
+                  xs={12}
+                  sm={12}
+                  md={12}
+                  lg={12}
+                >
+                  <Typography
+                    sx={{
+                      // fontWeight: 'bold',
+                      fontSize: 10,
+                    }}
+                  >
+                    {data.profile.preferences.description}
+                  </Typography>
+                </Grid>
+                )
+              }
             </Grid>
           </Box>
         </Box>

@@ -22,33 +22,6 @@ export function CustomerPreferences() {
   const history = useHistory();
 
   const user = Meteor.user();
-  // const preferences = {
-  //   name: ((
-  //     user.profile.preferences && user.profile.preferences.name
-  //   ) ? user.profile.preferences.name : user.profile.attributes.name),
-  //   image: ((
-  //     user.profile.preferences && user.profile.preferences.image
-  //   ) ? user.profile.preferences.image : undefined),
-  //   surname: ((
-  //     user.profile.preferences && user.profile.preferences.surname
-  //   ) ? user.profile.preferences.surname : user.profile.name),
-  //   postalCode: ((
-  //     user.profile.preferences && user.profile.preferences.potalCode
-  //   ) ? user.profile.preferences.postalCode : user.profile.attributes.postalCode),
-  //   age: ((
-  //     user.profile.preferences && user.profile.preferences.age
-  //   ) ? user.profile.preferences.age : user.profile.attributes.age),
-  //   diet: ((
-  //     user.profile.preferences && user.profile.preferences.diet
-  //   ) ? user.profile.preferences.diet : 11),
-  //   dislikes: ((
-  //     user.profile.preferences && user.profile.preferences.dislikes
-  //   ) ? user.profile.preferences.dislikes : []),
-  //   intolerances: ((
-  //     user.profile.preferences && user.profile.preferences.intolerances
-  //   ) ? user.profile.preferences.intolerances : []),
-  // };
-
   const [customerPreferences, setCustomerPreferences] = useState(user.profile.preferences);
 
   const onHandleCustomerPreferences = (e) => {

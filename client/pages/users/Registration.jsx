@@ -93,6 +93,7 @@ export function Registration() {
     eco: '0',
     city: '',
     address: '',
+    postalcode: '',
   });
   const onHandleMarketData = (e) => {
     setMarketData({ ...marketData, [e.target.name]: e.target.value });
@@ -484,6 +485,18 @@ export function Registration() {
                   name="address"
                   type="text"
                   autoComplete="address"
+                  onChange={onHandleMarketData}
+                  fullWidth
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextInput
+                  label={t('Código Postal')}
+                  variant="filled"
+                  name="postalcode"
+                  type="number"
+                  autoComplete="postalcode"
                   onChange={onHandleMarketData}
                   fullWidth
                   required

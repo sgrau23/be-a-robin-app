@@ -48,22 +48,6 @@ export function MarketPreferences() {
   });
 
   const user = Meteor.user();
-  // const preferences = {
-  //   address: ((
-  //     user.profile.preferences && user.profile.preferences.address
-  //   ) ? user.profile.preferences.address : user.profile.attributes.address),
-  //   image: (user.profile.preferences ? user.profile.image : undefined),
-  //   marketName: ((
-  //     user.profile.preferences && user.profile.preferences.marketName
-  //   ) ? user.profile.preferences.marketName : user.profile.attributs.marketName),
-  //   categories: ((
-  //     user.profile.preferences && user.profile.preferences.categories
-  //   ) ? user.profile.preferences.categories.split(',') : user.profile.attributes.categories.split(',')),
-  //   eco: ((
-  //     user.profile.preferences && user.profile.preferences.eco
-  //   ) ? user.profile.preferences.eco : user.profile.attributes.eco),
-  // };
-
   const [marketPreferences, setMarketPreferences] = useState(user.profile.preferences);
 
   const onHandleMarketPreferences = (e) => {
@@ -156,7 +140,7 @@ export function MarketPreferences() {
                   fontSize: 20,
                 }}
               >
-                {t('Datos personales:')}
+                {t('Datos del comercio:')}
               </Typography>
             </Grid>
             <Grid
@@ -186,6 +170,25 @@ export function MarketPreferences() {
               lg={12}
             >
               <TextInput
+                label={t('Ciudad')}
+                variant="filled"
+                name="city"
+                type="text"
+                autoComplete=""
+                onChange={onHandleMarketPreferences}
+                value={marketPreferences.city}
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              md={12}
+              lg={12}
+            >
+              <TextInput
                 label={t('Dirección')}
                 variant="filled"
                 name="address"
@@ -193,6 +196,25 @@ export function MarketPreferences() {
                 autoComplete=""
                 onChange={onHandleMarketPreferences}
                 value={marketPreferences.address}
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              md={12}
+              lg={12}
+            >
+              <TextInput
+                label={t('Código Postal')}
+                variant="filled"
+                name="postalcode"
+                type="number"
+                autoComplete=""
+                onChange={onHandleMarketPreferences}
+                value={marketPreferences.postalcode}
                 fullWidth
                 required
               />
@@ -238,6 +260,45 @@ export function MarketPreferences() {
                 </Select>
 
               </FormControl>
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              md={12}
+              lg={12}
+            >
+              <TextInput
+                label={t('Horario')}
+                variant="filled"
+                name="schedule"
+                type="text"
+                autoComplete=""
+                onChange={onHandleMarketPreferences}
+                value={marketPreferences.schedule}
+                placeholder={t('Abierto de')}
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              md={12}
+              lg={12}
+            >
+              <TextInput
+                label={t('Descripción comercio')}
+                variant="filled"
+                name="description"
+                type="text"
+                autoComplete=""
+                onChange={onHandleMarketPreferences}
+                value={marketPreferences.description}
+                fullWidth
+                required
+              />
             </Grid>
             <Grid
               item

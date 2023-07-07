@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import Future from 'fibers/future';
 import { check } from 'meteor/check';
 import fetch from 'node-fetch';
-import { createUser } from './openid';
+import { createUser, getCoordinates } from './openid';
 import {
   MarketsOfferProductsTemporalCollection,
   MarketsOfferProductsCollection, MarketsHistoricalOfferProductsCollection,
@@ -92,16 +92,6 @@ Meteor.methods({
       ...productData,
     });
   },
-  // 'products.submitOffers': (offers) => {
-  //   check(offers, Array);
-  //   // Store offers and remove from temporal collection
-  //   offers.forEach((element) => {
-  //     MarketsOfferProductsCollection.insert({
-  //       ...element.offer,
-  //     });
-  //     removeTemporalOffer(element.offer._id);
-  //   });
-  // },
   'products.extendOffer': (offer, _id) => {
     check(offer, Object);
     check(_id, String);
@@ -269,8 +259,8 @@ Meteor.methods({
         $set: {
           'profile.preferences.optimizerData': {
             diet,
-            selectedIntolerances,
-            selectedDislikes,
+            intolerances: selectedIntolerances,
+            dislikes: selectedDislikes,
           },
         },
       },
@@ -279,6 +269,11 @@ Meteor.methods({
   'user.storePreferences': (preferences, _id) => {
     check(preferences, Object);
     check(_id, String);
+    if (preferences.address) {
+      preferences.coordinates = getCoordinates({
+        city: preferences.city, street: preferences.address, postalcode: preferences.postalcode,
+      });
+    }
     Meteor.users.update(
       { _id },
       {
@@ -391,8 +386,9 @@ Meteor.methods({
     check(_id, String);
     return HistoricalShoppingCartCollection.find({ _id }).fetch();
   },
-  'location.getAddress': (coordinates) => {
+  'location.getAddress': (coordinates, _id) => {
     check(coordinates, Object);
+    check(_id, String);
     const future = new Future();
     fetch(
       `https://geocode.maps.co/reverse?lat=${coordinates.latitude}&lon=${coordinates.longitude}`,
@@ -407,7 +403,19 @@ Meteor.methods({
     const response = future.wait();
     // Return fomatted address
     if (response.address) {
-      return `${response.address.road},${(response.address.house_number ? response.address.house_number : response.address.city)}`;
+      response.address.coordinates = coordinates;
+      response.address.completeAddress = `${response.address.road},${(response.address.house_number ? response.address.house_number : response.address.city)}`;
+      Meteor.users.update(
+        { _id },
+        {
+          $set: {
+            'profile.preferences.location': {
+              ...response.address,
+            },
+          },
+        },
+      );
+      return response.address.completeAddress;
     }
     return undefined;
   },

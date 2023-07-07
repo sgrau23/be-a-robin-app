@@ -90,27 +90,29 @@ function DietCard({
 export function OptimizerPreferencesForm({
   open, onHandleClose, setCustomerPreferences, preferences, setPurchasePurpose, pathname = '',
 }) {
+  console.log(preferences);
   const { t } = useTranslation();
   // const [optimizerPreferences, setOptimizerPreferences] = useState(Meteor.user().optimizerPreferences);
   const [selectedDiet, setSelectedDiet] = useState(((
-    preferences && preferences.diet) ? preferences.diet : 11),
+    preferences.optimizerData && preferences.optimizerData.diet) ? preferences.optimizerData.diet : 11),
   );
   const [activeStep, setActiveStep] = useState(0);
   const [visibleDislike, setVisibleDislike] = useState();
   const [hasIntolerances, setHasIntolerances] = useState((!!((
-    preferences && preferences.intolerances && preferences.intolerances.length > 0
+    preferences.optimizerData && preferences.optimizerData.intolerances
+    && preferences.optimizerData.intolerances.length > 0
   ))));
   const [intolerances, setIntolerances] = useState([]);
   const [productsSuperfamilies, setProductsSuperfamilies] = useState({});
   const [selectedIntolerances, setSelectedIntolerances] = useState(
-    ((preferences
-      && preferences.intolerances
-    ) ? preferences.intolerances : []),
+    ((preferences.optimizerData
+      && preferences.optimizerData.intolerances
+    ) ? preferences.optimizerData.intolerances : []),
   );
   const [selectedDislikes, setSelectedDislikes] = useState(
-    ((preferences
-      && preferences.dislikes
-    ) ? preferences.dislikes : []),
+    ((preferences.optimizerData
+      && preferences.optimizerData.dislikes
+    ) ? preferences.optimizerData.dislikes : []),
   );
 
   const history = useHistory();
@@ -168,19 +170,26 @@ export function OptimizerPreferencesForm({
   };
 
   const storePurchaseOptimizerPreferences = () => {
-    Meteor.call('purchaseOptimizer.storePreferences', preferences.diet, preferences.dislikes, preferences.intolerances, Meteor.user()._id, (error) => {
-      if (error) console.log(error);
-    });
+    console.log(preferences);
+    Meteor.call(
+      'purchaseOptimizer.storePreferences',
+      preferences.optimizerData.diet,
+      preferences.optimizerData.dislikes,
+      preferences.optimizerData.intolerances,
+      Meteor.user()._id,
+      (error) => {
+        if (error) console.log(error);
+      });
   };
 
   const handleOptimizePurchase = () => {
-    preferences.diet = parseInt(selectedDiet, 10);
-    preferences.dislikes = selectedDislikes;
+    preferences.optimizerData.diet = parseInt(selectedDiet, 10);
+    preferences.optimizerData.dislikes = selectedDislikes;
     if (hasIntolerances) {
-      preferences.intolerances = selectedIntolerances;
+      preferences.optimizerData.intolerances = selectedIntolerances;
       setHasIntolerances((selectedIntolerances.length !== 0));
     } else {
-      preferences.intolerances = [];
+      preferences.optimizerData.intolerances = [];
       setSelectedIntolerances([]);
     }
     if (pathname !== '') {
@@ -385,31 +394,6 @@ export function OptimizerPreferencesForm({
                   </Grid>
                 </Grid>
               </Grid>
-              {/* <Grid
-                item
-                xs={12}
-                sm={12}
-                md={12}
-                lg={12}
-                justifyContent="center"
-                display="flex"
-              >
-                <Button
-                  onClick={handleNext}
-                  size="small"
-                  variant="contained"
-                  sx={{
-                    width: '75%',
-                    boxShadow: 5,
-                    borderRadius: 10,
-                    bottom: '20px',
-                    // margin: '10px',
-                    position: 'fixed',
-                  }}
-                >
-                  {t('Siguiente')}
-                </Button>
-              </Grid> */}
             </Grid>
             <Box
               sx={{

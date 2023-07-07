@@ -43,8 +43,6 @@ export function CustomerDashboard() {
     }
   }, []);
 
-  console.log(marketsList);
-
   // useEffect(() => {
   //   console.log(marketTypeSelected);
   // }, [marketTypeSelected]);
@@ -81,7 +79,9 @@ export function CustomerDashboard() {
           </Grid>
           {
             marketsList && marketTypeSelected === 'frescos' && (
-              marketsList.map((market) => <MarketCard data={market} id={market.profile.preferences.name} type="markets" />)
+              marketsList.map(
+                (market) => <MarketCard data={market} key={market.profile.preferences.name} id={market.profile.preferences.name} type="markets" />,
+              )
             )
           }
           {

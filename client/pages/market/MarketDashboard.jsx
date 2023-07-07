@@ -122,12 +122,12 @@ export function MarketDashboard({ ...props }) {
 
   return (
     <>
-      {/* <Backdrop
+      <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={!marketData}
       >
         <CircularProgress color="inherit" />
-      </Backdrop> */}
+      </Backdrop>
       {
         marketData && (
           <Grid
@@ -195,7 +195,7 @@ export function MarketDashboard({ ...props }) {
                       fontWeight: 'bold',
                     }}
                   >
-                    {t(marketData.profile.attributes.marketName)}
+                    {t(marketData.profile.preferences.name)}
                   </Typography>
                   <Typography
                     sx={{
@@ -203,7 +203,15 @@ export function MarketDashboard({ ...props }) {
                       fontSize: 10,
                     }}
                   >
-                    Horario: 9:00h a 13:00h - 17:00h a 20:00h
+                    {`${t('Horario: ')}${marketData.profile.preferences.schedule}`}
+                  </Typography>
+                  <Typography
+                    sx={{
+                    // fontWeight: 'bold',
+                      fontSize: 10,
+                    }}
+                  >
+                    {marketData.profile.preferences.description}
                   </Typography>
                 </Box>
               </Box>
