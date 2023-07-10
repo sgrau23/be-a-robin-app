@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
 import {
-  Grid, Backdrop, CircularProgress,
+  Grid, Backdrop, CircularProgress, Alert, Typography,
 } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { CustomerFooterNavbar } from '../../components/navigations/CustomerFooterNavbar';
 import { CustomerTopNavbar } from '../../components/navigations/CustomerTopNavbar';
 import { MarketTypes } from '../../components/others/MarketTypes';
@@ -10,8 +11,9 @@ import { SupermarketsCollection } from '../../../imports/db/collections';
 import { MarketCard } from '../../components/markets/MarketCard';
 
 export function CustomerDashboard() {
-  //   const { t } = useTranslation();
+  const { t } = useTranslation();
   const [marketsList, setMarketsList] = useState();
+  const { location } = Meteor.user().profile.preferences;
   const [supermarketsList, setSupermarketsList] = useState();
   const [ecoList, setEcoList] = useState();
   // const [marketsList, setMarketsList] = useState();
@@ -22,7 +24,21 @@ export function CustomerDashboard() {
     const handler = Meteor.subscribe('markets');
     if (!handler.ready()) setMarketsList();
     else {
-      const data = Meteor.users.find({ 'profile.attributes.userType': 'comercio' }).fetch();
+      let data = [];
+      if (location) {
+        data = Meteor.users.find(
+          {
+            'profile.attributes.userType': 'comercio',
+            // 'profile.preferences.coordinates': {
+            //   $near: {
+            //     $geometry: location.coordinates,
+            //     $maxDistance: 10000,
+            //   },
+            // },
+            'profile.preferences.city': { $regex: new RegExp(location.city, 'i') },
+          },
+        ).fetch();
+      }
       const markets = [];
       const eco = [];
       data.forEach((element) => {
@@ -92,6 +108,66 @@ export function CustomerDashboard() {
           {
             supermarketsList && marketTypeSelected === 'secos' && (
               supermarketsList.map((market) => <MarketCard data={market} id={market.key} type="supermarkets" />)
+            )
+          }
+          {
+            supermarketsList && supermarketsList.length === 0 && marketTypeSelected === 'secos' && (
+              <Alert
+                severity="info"
+                color="success"
+                sx={{
+                  margin: '8px',
+                  width: '100%',
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: 12,
+                  }}
+                >
+                  {t('No hay comercios en tu filtro de distancia.')}
+                </Typography>
+              </Alert>
+            )
+          }
+          {
+            marketsList && marketsList.length === 0 && marketTypeSelected === 'frescos' && (
+              <Alert
+                severity="info"
+                color="success"
+                sx={{
+                  margin: '8px',
+                  width: '100%',
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: 12,
+                  }}
+                >
+                  {t('No hay comercios en tu filtro de distancia.')}
+                </Typography>
+              </Alert>
+            )
+          }
+          {
+            ecoList && ecoList.length === 0 && marketTypeSelected === 'eco' && (
+              <Alert
+                severity="info"
+                color="success"
+                sx={{
+                  margin: '8px',
+                  width: '100%',
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: 12,
+                  }}
+                >
+                  {t('No hay comercios en tu filtro de distancia.')}
+                </Typography>
+              </Alert>
             )
           }
         </Grid>

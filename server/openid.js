@@ -9,10 +9,13 @@ const {
   clientId, clientSecret, tokenUrl, usersUrl,
 } = Meteor.settings.openid;
 
+const { geocoding } = Meteor.settings;
+
 export const getCoordinates = (address) => {
   const future = new Future();
   fetch(
-    `https://geocode.maps.co/search?city=${address.city}&street=${address.street}&postalcode=${address.postalcode}`,
+    // `https://geocode.maps.co/search?city=${address.city}&street=${address.street}&postalcode=${address.postalcode}`,
+    `${geocoding.address2coordinates}?apiKey=${geocoding.apiKey}&text=${address.street},${address.postalcode} ${address.city}`,
     {
       method: 'get',
       // headers,
@@ -22,12 +25,7 @@ export const getCoordinates = (address) => {
     .then((r) => future.return(r))
     .catch((error) => { console.error(error); future.return(); });
   const response = future.wait();
-  if (response.length > 0) {
-    return {
-      latitude: parseFloat(response[0].lat),
-      longitude: parseFloat(response[0].lon),
-    };
-  }
+  if (Object.keys(response).length > 0) return response.features[0].geometry;
   return undefined;
 };
 

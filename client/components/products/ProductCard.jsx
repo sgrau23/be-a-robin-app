@@ -1,22 +1,19 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Grid, Typography, Box, Avatar,
+  Grid, Typography, Box,
 } from '@mui/material';
 import SwipeableViews from 'react-swipeable-views';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Autorenew } from '@mui/icons-material';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { ProductDetails } from './ProductDetails';
 import { CustomerProduct } from './CustomerProduct';
 import { MarketProduct } from './MarketProduct';
 
 export function ProductCard({
   product, shoppingView = false, marketView = false,
-  historicalOffer = false, offerType = '',
+  historicalOffer = false, offerType = '', optimizerView = false,
 }) {
   const { t } = useTranslation();
-
   // Methods to be used by market user
   const onHandleDeleteProduct = () => {
     if (historicalOffer) {
@@ -42,7 +39,7 @@ export function ProductCard({
     <>
       {
         !marketView && (
-          <CustomerProduct product={product} shoppingView={shoppingView} />
+          <CustomerProduct product={product} shoppingView={shoppingView} optimizerView={optimizerView} />
         )
       }
       {

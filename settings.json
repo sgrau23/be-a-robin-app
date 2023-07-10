@@ -6,6 +6,11 @@
         "realmId": "be-a-robin",
         "clientSecret": "DIDO3H4HiSEDzQSZexuZG8BKUzEtZS8g"
     },
+    "geocoding": {
+        "apiKey": "bd339f41175b4839aee5cc1756c0b199",
+        "coordinates2address": "https://api.geoapify.com/v1/geocode/reverse",
+        "address2coordinates": "https://api.geoapify.com/v1/geocode/search"
+    },
     "inuba": {
         "url": "https://api.inuba.com/nutrition/user_nutrition_plan",
         "codeClient": "b0a0a2a4-d3e3-418d-8dce-d2d213e719f2",
@@ -59,47 +64,56 @@
           {   
               "id": "1",
               "name": "Cereales y derivados",
-              "img": "grains.png"
+              "img": "grains.png",
+              "key": "grains"
           },
           {   
               "id": "2",
               "name": "Huevos y lácteos",
-              "img": "eggs.png"
+              "img": "eggs.png",
+              "key": "eggs"
           },
           {   
               "id": "3",
               "name": "Carne y derivados",
-              "img": "meat.png"
+              "img": "meat.png",
+              "key": "meat"
           },
           {   
               "id": "4",
               "name": "Frutas",
-              "img": "fruits.png"
+              "img": "fruits.png",
+              "key": "fruits"
           },
           {   
               "id": "5",
               "name": "Verduras y hortalizas",
-              "img": "vegetables.png"
+              "img": "vegetables.png",
+              "key": "vegetables"
           },
           {   
               "id": "6",
               "name": "Grasas y aceites",
-              "img": "oils.png"
+              "img": "oils.png",
+              "jey": "oils"
           },
           {   
               "id": "9",
               "name": "Pescados y mariscos",
-              "img": "fish.png"
+              "img": "fish.png",
+              "key": "fish"
           },
           {   
               "id": "12",
               "name": "Legumbres y derivados",
-              "img": "legumes.png"
+              "img": "legumes.png",
+              "key": "legumes"
           },
           {   
               "id": "14",
               "name": "Especias y salsas",
-              "img": "sauces.png"
+              "img": "sauces.png",
+              "key": "sauces"
           }   
         ],
         "categoriesMapping": {

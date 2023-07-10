@@ -6,12 +6,8 @@ import {
   Grid, Box,
 } from '@mui/material';
 import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
-import {
-  useHistory,
-} from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core';
-import { getPreviousPath } from '../../lib/utils';
 import { ResponsiveGrid } from '../ResponsiveGrid';
 import { ListFilter } from '../others/ListFilter';
 import { DislikeCard } from './DislikeCard';
@@ -43,7 +39,6 @@ const Transition = React.forwardRef((props, ref) => <Slide direction="up" ref={r
 function DietCard({
   id, url, selectedDiet, onClickCard, cardMessage,
 }) {
-  console.log(id, selectedDiet);
   const classes = useStyles();
   return (
     <div
@@ -88,9 +83,9 @@ function DietCard({
 }
 
 export function OptimizerPreferencesForm({
-  open, onHandleClose, setCustomerPreferences, preferences, setPurchasePurpose, pathname = '',
+  open, onHandleClose, setCustomerPreferences, preferences,
+  optimizePurchase,
 }) {
-  console.log(preferences);
   const { t } = useTranslation();
   // const [optimizerPreferences, setOptimizerPreferences] = useState(Meteor.user().optimizerPreferences);
   const [selectedDiet, setSelectedDiet] = useState(((
@@ -115,8 +110,6 @@ export function OptimizerPreferencesForm({
     ) ? preferences.optimizerData.dislikes : []),
   );
 
-  const history = useHistory();
-
   useEffect(() => {
     Meteor.call('inuba.getIntolerances', (error, result) => {
       if (error) console.log(error);
@@ -135,8 +128,9 @@ export function OptimizerPreferencesForm({
   const handleBack = () => {
     if (visibleDislike) setVisibleDislike(undefined);
     else if (activeStep === 0 && preferences) onHandleClose();
-    else if (activeStep === 0 && !preferences && pathname !== '') history.push(getPreviousPath(pathname));
-    else if (activeStep === 0 && !preferences && pathname === '') onHandleClose();
+    // else if (activeStep === 0 && preferences) onHandleClose();
+    // else if (activeStep === 0 && !preferences && pathname !== '') history.push(getPreviousPath(pathname));
+    // else if (activeStep === 0 && !preferences && pathname === '') onHandleClose();
     else setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
@@ -162,15 +156,7 @@ export function OptimizerPreferencesForm({
     ),
   );
 
-  const optimizePurchase = (data) => {
-    Meteor.call('purchaseOptimizer.optimize', data, Meteor.user()._id, (error, result) => {
-      if (error) console.log(error);
-      else setPurchasePurpose(result);
-    });
-  };
-
   const storePurchaseOptimizerPreferences = () => {
-    console.log(preferences);
     Meteor.call(
       'purchaseOptimizer.storePreferences',
       preferences.optimizerData.diet,
@@ -192,8 +178,7 @@ export function OptimizerPreferencesForm({
       preferences.optimizerData.intolerances = [];
       setSelectedIntolerances([]);
     }
-    if (pathname !== '') {
-      setPurchasePurpose(undefined);
+    if (optimizePurchase) {
       optimizePurchase(preferences);
     }
     setActiveStep(0);
@@ -202,7 +187,6 @@ export function OptimizerPreferencesForm({
     storePurchaseOptimizerPreferences();
     onHandleClose();
   };
-
   return (
     <Dialog
       fullScreen
@@ -527,8 +511,8 @@ export function OptimizerPreferencesForm({
                 }}
               >
                 {
-                  pathname !== '' ? (
-                    t('Siguiente')
+                  optimizePurchase ? (
+                    t('Optimizar')
                   ) : (
                     t('Guardar')
                   )

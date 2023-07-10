@@ -11,6 +11,7 @@ import {
   ChatConversationsCollection,
   ChatConversationsMessagesCollection,
   ShoppingCartCollection,
+  OptimizedPurchaseCollection,
 } from '../imports/db/collections';
 
 // Publish user data
@@ -144,6 +145,16 @@ Meteor.publish('shoppingCart', function ShoppingCart(userId) {
   if (this.userId) {
     return ShoppingCartCollection.find({
       userId,
+    });
+  }
+  this.ready();
+});
+
+Meteor.publish('optimizedPurchase', function OptimizedPurchase(userId) {
+  check(userId, String);
+  if (this.userId) {
+    return OptimizedPurchaseCollection.find({
+      _id: userId,
     });
   }
   this.ready();

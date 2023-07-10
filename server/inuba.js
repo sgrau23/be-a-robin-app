@@ -5,6 +5,8 @@ const {
   url, codeClient, codeCenter, codeDevice, categories,
 } = Meteor.settings.inuba;
 
+const { settings } = Meteor;
+
 export const intolerances = [
   { id: 6, name: 'Lactosa' },
   { id: 7, name: 'Gluten' },
@@ -7800,23 +7802,24 @@ export const productsSuperfamilies = {
 export const getProductProposal = (userPreferences) => {
   const future = new Future();
   // Define required body with user preferences
+  // console.log(userPreferences);
   const body = {
     id_language: 1,
-    age: 37,
+    age: parseInt(userPreferences.age, 10),
     id_gender: 1,
     height: 171,
     weight: 65,
-    id_goal: 3,
+    id_goal: 1,
     id_life_style: 1,
     id_days_phys: 1,
     id_hours_phys: 1,
     id_diet_variety: 1,
     id_daily_food: 1,
-    id_diet_type: 8,
+    id_diet_type: userPreferences.optimizerData.diet,
     local_time: '2022-08-01 6:52:30',
-    aversions: [28, 151],
-    diseases: [2],
-    intolerances: [7],
+    aversions: userPreferences.optimizerData.dislikes,
+    diseases: (userPreferences.optimizerData.diseases ? userPreferences.optimizerData.diseases : []),
+    intolerances: userPreferences.optimizerData.intolerances,
   };
   const headers = {
     'Content-Type': 'application/json',
@@ -7838,25 +7841,34 @@ export const getProductProposal = (userPreferences) => {
     .catch((error) => { console.error(error); future.return(); });
   const response = future.wait();
   // Obtain only products with their categories
-  const products = {};
+  const items = {};
   const names = [];
+  const purposeCategories = [];
   response.foods.forEach((element) => {
     const key = categories[element.id_food_super_family];
-    if (key in products) {
+    if (key in items) {
       if (!names.includes(element.food_name)) {
-        products[key].push({
+        items[key].push({
           name: element.food_name,
           category: key,
+          image: settings.data.blank_image,
+          marketName: 'Sin mercado',
         });
       }
     } else {
-      products[key] = [{
+      purposeCategories.push(key);
+      items[key] = [{
         name: element.food_name,
         category: key,
+        image: settings.data.blank_image,
+        marketName: 'Sin mercado',
       }];
     }
     names.push(element.food_name);
   });
-  return products;
+  return {
+    purpose: items,
+    categories: purposeCategories,
+  };
 };
 

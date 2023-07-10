@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Typography, Grid, Fab, FormControl, InputLabel, Select, Chip,
   Button, Box, Alert, FormControlLabel, FormGroup, Checkbox,
-  MenuItem,
+  MenuItem, Backdrop, CircularProgress,
 } from '@mui/material';
 import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded';
 import { useTheme } from '@mui/material/styles';
@@ -38,6 +38,7 @@ export function MarketPreferences() {
   const { t } = useTranslation();
   const [categories, setCategories] = useState([]);
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const history = useHistory();
   const theme = useTheme();
@@ -68,12 +69,14 @@ export function MarketPreferences() {
   };
 
   const onHandleSubmitPreferences = () => {
+    setLoading(true);
     Meteor.call('user.storePreferences', marketPreferences, Meteor.user()._id, (err) => {
       if (err) setError(true);
       else {
         setError(false);
         setSuccess(true);
       }
+      setLoading(false);
     });
   };
 
@@ -101,6 +104,12 @@ export function MarketPreferences() {
 
   return (
     <>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (th) => th.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <MarketPreferencesTopNavbar user={user} />
       <Box
         maxWidth

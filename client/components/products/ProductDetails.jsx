@@ -142,41 +142,43 @@ export function ProductDetails({ product, onHandleClose, open }) {
                     €
                   </Typography>
                 ) : (
-                  <Grid
-                    container
-                    columns={{
-                      xs: 12, sm: 12, md: 12, lg: 12,
-                    }}
-                    spacing={{
-                      xs: 1, sm: 1, md: 1, lg: 1,
-                    }}
-                  >
+                  product.price_info && (
                     <Grid
-                      item
+                      container
+                      columns={{
+                        xs: 12, sm: 12, md: 12, lg: 12,
+                      }}
+                      spacing={{
+                        xs: 1, sm: 1, md: 1, lg: 1,
+                      }}
                     >
-                      <Typography
-                        sx={{
-                          fontStyle: 'italic',
-                          fontSize: 12,
-                        }}
+                      <Grid
+                        item
                       >
-                        {`${product.price_info.price}€ /`}
-                      </Typography>
-                    </Grid>
-                    <Grid
-                      item
-                    >
-                      <Typography
-                        sx={{
-                          textDecoration: 'line-through',
-                          color: 'red',
-                          fontSize: 12,
-                        }}
+                        <Typography
+                          sx={{
+                            fontStyle: 'italic',
+                            fontSize: 12,
+                          }}
+                        >
+                          {`${product.price_info.price}€ /`}
+                        </Typography>
+                      </Grid>
+                      <Grid
+                        item
                       >
-                        {`${product.price_info.prev_price}€`}
-                      </Typography>
+                        <Typography
+                          sx={{
+                            textDecoration: 'line-through',
+                            color: 'red',
+                            fontSize: 12,
+                          }}
+                        >
+                          {`${product.price_info.prev_price}€`}
+                        </Typography>
+                      </Grid>
                     </Grid>
-                  </Grid>
+                  )
 
                 )
               }

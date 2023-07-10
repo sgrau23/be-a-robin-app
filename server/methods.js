@@ -44,9 +44,41 @@ const removeHistoricalLastMinute = (_id) => {
   MarketsHistoricalLastMinuteProductsCollection.remove({ _id });
 };
 
-const getCloserMarket = (markets, userId) => markets[0];
+const deg2rad = (deg) => deg * (Math.PI / 180);
 
-const getOnSalesMarketProducts = (marketName, optimizerPreferences, category) => {
+const _getDistanceFromLatLonInKm = (lat1, lon1, lat2, lon2) => {
+  const R = 6371; // Radius of the earth in kilometers
+  const dLat = deg2rad(lat2 - lat1); // deg2rad below
+  const dLon = deg2rad(lon2 - lon1);
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+    + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2))
+    * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const d = R * c; // Distance in KM
+  return d;
+};
+
+const calculateDistance = (point1, point2) => _getDistanceFromLatLonInKm(
+  point1[1], point1[0], point2[1], point2[0],
+);
+
+const getCloserMarket = (markets, user) => {
+  let closerMarket;
+  let closerDistance = 10 ** 1000;
+  markets.forEach((market) => {
+    const distance = calculateDistance(
+      market.profile.preferences.coordinates.coordinates,
+      user.profile.preferences.location.coordinates.coordinates,
+    );
+    if (distance < closerDistance) {
+      closerMarket = market;
+      closerDistance = distance;
+    }
+  });
+  return closerMarket;
+};
+
+const getOnSalesMarketProducts = (marketName, category) => {
   const result = MarketsOfferProductsCollection.find({
     marketName,
     category_id: category,
@@ -57,12 +89,15 @@ const getOnSalesMarketProducts = (marketName, optimizerPreferences, category) =>
     data.products.push({
       name: product.name,
       price: product.price,
+      image: product.image,
+      expirationDate: product.expirationDate,
+      marketName,
     });
   });
   return data;
 };
 
-const assignInubaProducts2CloserMarket = (inubaProducts, userId) => ({
+const assignInubaProducts2CloserMarket = (inubaProducts) => ({
   products: inubaProducts,
   marketName: 'Sin mercado',
 });
@@ -289,44 +324,51 @@ Meteor.methods({
   'purchaseOptimizer.optimize': (optimizerPreferences, _id) => {
     check(optimizerPreferences, Object);
     check(_id, String);
+    // Get current user
+    const user = Meteor.users.find({ _id }).fetch()[0];
     // Get iNuba purpose
     const inubaPurpose = getProductProposal(optimizerPreferences);
     const finalPurpose = {};
     const involvedMarkets = [];
+    let items = [];
     settings.public.dislikeCategories.forEach((category) => {
+      // Check if category exists in purpose
+      if (!inubaPurpose.categories.includes(category.key)) return;
       // Get available markets for current category
       const availableMarkets = Meteor.users.find(
-        { 'profile.attributes.marketCategories': { $regex: new RegExp(`.*${category.id}.*`) } },
+        {
+          'profile.preferences.categories': parseInt(category.id, 10),
+          'profile.preferences.city': { $regex: new RegExp(user.profile.preferences.location.city, 'i') },
+        },
       ).fetch();
       // Get closer market
-      const closerMarket = getCloserMarket(availableMarkets, _id);
+      const closerMarket = getCloserMarket(availableMarkets, user);
       let productsInfo = {};
       // Get products in sales of closer market if it exists
       if (closerMarket) {
         productsInfo = getOnSalesMarketProducts(
-          closerMarket.profile.attributes.marketName, optimizerPreferences, category.id,
+          closerMarket.profile.preferences.name, category.id,
         );
       }
       // If there is no products get inuba purpose for current category
       if (Object.keys(productsInfo).length === 0) {
         productsInfo = assignInubaProducts2CloserMarket(
-          productsInfo = inubaPurpose[category.id],
-          _id,
+          productsInfo = inubaPurpose.purpose[category.key],
         );
       }
       // Add to final purpose
-      finalPurpose[category.id] = productsInfo;
+      // finalPurpose[category.id] = productsInfo;
+      items = items.concat(productsInfo.products);
       if (!involvedMarkets.includes(productsInfo.marketName)) involvedMarkets.push(productsInfo.marketName);
     });
     // Store final purpose
-    OptimizedPurchaseCollection.update({ _id }, { $set: { purpose: finalPurpose, involvedMarkets } }, { upsert: true });
-    return { purpose: finalPurpose, involvedMarkets };
+    OptimizedPurchaseCollection.update({ _id }, { $set: { products: items, involvedMarkets } }, { upsert: true });
+    return { products: items, involvedMarkets };
   },
   'purchaseOptimizer.get': (_id) => {
     check(_id, String);
-    const purpose = OptimizedPurchaseCollection.find({ _id }).fetch();
-    if (purpose.length > 0) return purpose[0];
-    return {};
+    const purpose = OptimizedPurchaseCollection.find({ _id }).fetch().pop();
+    return purpose;
   },
   'shoppingCart.addProduct': (product, quantity, userId, marketName) => {
     check(product, Object);
@@ -391,7 +433,8 @@ Meteor.methods({
     check(_id, String);
     const future = new Future();
     fetch(
-      `https://geocode.maps.co/reverse?lat=${coordinates.latitude}&lon=${coordinates.longitude}`,
+      // `https://geocode.maps.co/reverse?lat=${coordinates.latitude}&lon=${coordinates.longitude}`,
+      `${settings.geocoding.coordinates2address}?lat=${coordinates.latitude}&lon=${coordinates.longitude}&apiKey=${settings.geocoding.apiKey}`,
       {
         method: 'get',
         // headers,
@@ -402,20 +445,25 @@ Meteor.methods({
       .catch((error) => { console.error(error); future.return(); });
     const response = future.wait();
     // Return fomatted address
-    if (response.address) {
-      response.address.coordinates = coordinates;
-      response.address.completeAddress = `${response.address.road},${(response.address.house_number ? response.address.house_number : response.address.city)}`;
+    if (Object.keys(response).length > 0) {
+      const { properties } = response.features[0];
       Meteor.users.update(
         { _id },
         {
           $set: {
             'profile.preferences.location': {
-              ...response.address,
+              coordinates: {
+                type: 'Point',
+                coordinates: [coordinates.longitude, coordinates.latitude],
+              },
+              completeAddress: properties.formatted,
+              address: `${properties.street}, ${properties.housenumber}`,
+              city: properties.city,
             },
           },
         },
       );
-      return response.address.completeAddress;
+      return `${properties.street}, ${properties.housenumber}`;
     }
     return undefined;
   },

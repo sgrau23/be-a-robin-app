@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Typography, Grid, Fab,
-  Button, Box, Alert,
+  Button, Box, Alert, Backdrop, CircularProgress,
 } from '@mui/material';
 import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -18,6 +18,7 @@ export function CustomerPreferences() {
   const { t } = useTranslation();
   const [openOptimizerPreferencesForm, setOpenOptimizerPreferencesForm] = useState(false);
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const history = useHistory();
 
@@ -46,6 +47,7 @@ export function CustomerPreferences() {
   };
 
   const onHandleSubmitPreferences = () => {
+    setLoading(true);
     Meteor.call('user.storePreferences', customerPreferences, Meteor.user()._id, (err) => {
       if (err) {
         setError(true);
@@ -53,6 +55,7 @@ export function CustomerPreferences() {
         setError(false);
         setSuccess(true);
       }
+      setLoading(false);
     });
   };
 
@@ -67,6 +70,12 @@ export function CustomerPreferences() {
 
   return (
     <>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (th) => th.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <CustomerPreferencesTopNavbar user={user} />
       <OptimizerPreferencesForm
         open={openOptimizerPreferencesForm}

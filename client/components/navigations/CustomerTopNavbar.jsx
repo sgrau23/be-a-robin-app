@@ -17,7 +17,7 @@ export function CustomerTopNavbar() {
   // const [totalProductsCart, setTotalProductsCart] = useState(0);
   const { location } = Meteor.user().profile.preferences;
   const [currentLocation, setCurrentLocation] = useState(
-    (location ? location.completeAddress : undefined),
+    (location ? location.address : undefined),
   );
   const [coordinates, setCoordinates] = useState();
   // Translations
@@ -107,15 +107,18 @@ export function CustomerTopNavbar() {
                   marginRight: '9px',
                 }}
               />
+
               <Typography
                 color="black"
                 sx={{
                   fontWeight: 'bold',
                   fontSize: 12,
+                  maxWidth: '170px',
                 }}
               >
                 {`${(currentLocation || t('No localización'))}`}
               </Typography>
+
             </div>
 
             {/* <GpsFixedIcon color="primary" /> */}

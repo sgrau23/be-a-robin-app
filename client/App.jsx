@@ -9,15 +9,6 @@ import { Login } from './pages/users/Login';
 import { Registration } from './pages/users/Registration';
 import { CustomerDashboard } from './pages/customer/CustomerDashboard';
 import { MarketDashboard } from './pages/market/MarketDashboard';
-import { Offers } from './pages/market/offers/Offers';
-import { OffersAdd } from './pages/market/offers/OffersAdd';
-import { OffersManage } from './pages/market/offers/OffersManage';
-import { OffersHistorical } from './pages/market/offers/OffersHistorical';
-
-import { LastMinute } from './pages/market/lastminute/LastMinute';
-import { LastMinuteAdd } from './pages/market/lastminute/LastMinuteAdd';
-import { LastMinuteManage } from './pages/market/lastminute/LastMinuteManage';
-import { LastMinuteHistorical } from './pages/market/lastminute/LastMinuteHistorical';
 
 import { PropsRoute } from './pages/PropsRoute';
 // import { Navbar } from './components/Navbar';
@@ -26,7 +17,7 @@ import { PropsRoute } from './pages/PropsRoute';
 import { mainTheme } from './styles/theme';
 
 import { Chat } from './components/chat/Chat';
-import { PurchaseOptimizer } from './pages/customer/PurchaseOptimizer';
+import { PurchaseOptimizer } from './pages/customer/optimizer/PurchaseOptimizer';
 import { ProductList } from './pages/customer/markets/ProductsList';
 import { ShoppingList } from './components/shopping/ShoppingList';
 import { HistoricalShoppingList } from './components/shopping/HistoricalShoppingList';
@@ -88,6 +79,8 @@ export function App() {
 
                           <PropsRoute exact path="/customerPreferences" component={CustomerPreferences} />
 
+                          <PropsRoute exact path="/purchaseOptimizer" component={PurchaseOptimizer} />
+
                           {/* <PropsRoute exact path="/marketsOffers" component={Markets} />
                           <PropsRoute exact path="/marketsOffers/:id" component={MarketProducts} />
 
@@ -96,8 +89,6 @@ export function App() {
 
                           <PropsRoute exact path="/supermarkets" component={Supermarkets} />
                           <PropsRoute exact path="/supermarkets/:id" component={SupermarketProducts} /> */}
-
-                          <PropsRoute exact path="/purchaseOptimizer" component={PurchaseOptimizer} />
 
                         </>
                       )
