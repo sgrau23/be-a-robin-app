@@ -18,6 +18,7 @@ import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateR
 import {
   WhiteTypography, TextInput, RoundedButton,
 } from '../../styles/styledComponents';
+import { DialogInformative } from '../../components/dialogs/DialogInformative';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -46,6 +47,8 @@ export function Registration() {
   const { t } = useTranslation();
   // Confirmation dialog variables
   const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
+  const [openTerms, setOpenTerms] = useState(false);
+  const [openPrivacity, setOpenPrivacity] = useState(false);
   const [categories, setCategories] = useState({});
   Meteor.call('products.categories', (err, result) => {
     if (err) console.log(err);
@@ -53,6 +56,12 @@ export function Registration() {
   });
   const onHandleCloseConfirmationDialog = () => {
     setOpenConfirmationDialog(false);
+  };
+  const onHandleCloseTerms = () => {
+    setOpenTerms(false);
+  };
+  const onHandleClosePrivacity = () => {
+    setOpenPrivacity(false);
   };
   // User data variables
   const [userData, setUserData] = useState({
@@ -199,12 +208,24 @@ export function Registration() {
               paddingY: '3%',
             }}
           >
-            <Grid item xs={12}>
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              md={12}
+              lg={12}
+            >
               <Typography variant="h6" align="left">
                 {t('Datos cuenta usuario:')}
               </Typography>
             </Grid>
-            <Grid item xs={12}>
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              md={12}
+              lg={12}
+            >
               <TextInput
                 label={t('Nombre de usuario')}
                 variant="filled"
@@ -216,7 +237,13 @@ export function Registration() {
                 required
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              md={12}
+              lg={12}
+            >
               <TextInput
                 label={t('Correo electrónico')}
                 variant="filled"
@@ -228,7 +255,13 @@ export function Registration() {
                 required
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              md={12}
+              lg={12}
+            >
               <TextInput
                 label={t('Contraseña')}
                 variant="filled"
@@ -253,7 +286,13 @@ export function Registration() {
                 }}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              md={12}
+              lg={12}
+            >
               <TextInput
                 label={t('Repite la contraseña')}
                 variant="filled"
@@ -288,7 +327,13 @@ export function Registration() {
 
               )}
             </Grid>
-            <Grid item xs={12}>
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              md={12}
+              lg={12}
+            >
               <FormControl>
                 <Typography sx={{ color: 'black' }} variant="h6" align="left">
                   {t('Tipo de cuenta:')}
@@ -326,12 +371,24 @@ export function Registration() {
                 paddingY: '3%',
               }}
             >
-              <Grid item xs={12}>
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                md={12}
+                lg={12}
+              >
                 <Typography variant="h6" align="left">
                   {t(`Datos cuenta ${userData.userType}:`)}
                 </Typography>
               </Grid>
-              <Grid item xs={12}>
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                md={12}
+                lg={12}
+              >
                 <TextInput
                   label={t('Nombre')}
                   variant="filled"
@@ -343,7 +400,13 @@ export function Registration() {
                   required
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                md={12}
+                lg={12}
+              >
                 <TextInput
                   label={t('Primer apellido')}
                   variant="filled"
@@ -355,7 +418,13 @@ export function Registration() {
                   required
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                md={12}
+                lg={12}
+              >
                 <TextInput
                   label={t('Código postal')}
                   variant="filled"
@@ -367,7 +436,13 @@ export function Registration() {
                   required
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                md={12}
+                lg={12}
+              >
                 <TextInput
                   label={t('Años')}
                   variant="filled"
@@ -395,7 +470,13 @@ export function Registration() {
                 paddingY: '3%',
               }}
             >
-              <Grid item xs={12}>
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                md={12}
+                lg={12}
+              >
                 <Typography variant="h6" align="left">
                   {t(`Datos cuenta ${userData.userType}:`)}
                 </Typography>
@@ -454,7 +535,13 @@ export function Registration() {
 
                 </FormControl>
               </Grid>
-              <Grid item xs={12}>
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                md={12}
+                lg={12}
+              >
                 <TextInput
                   label={t('Nombre comercio')}
                   variant="filled"
@@ -466,7 +553,13 @@ export function Registration() {
                   required
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                md={12}
+                lg={12}
+              >
                 <TextInput
                   label={t('Ciudad')}
                   variant="filled"
@@ -478,7 +571,13 @@ export function Registration() {
                   required
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                md={12}
+                lg={12}
+              >
                 <TextInput
                   label={t('Dirección')}
                   variant="filled"
@@ -490,7 +589,13 @@ export function Registration() {
                   required
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                md={12}
+                lg={12}
+              >
                 <TextInput
                   label={t('Código Postal')}
                   variant="filled"
@@ -531,7 +636,40 @@ export function Registration() {
             </Grid>
           </>
           )}
-
+          <DialogInformative
+            open={openTerms}
+            onHandleClose={onHandleCloseTerms}
+            title="TÉRMINOS Y CONDICIONES:"
+            data={Meteor.settings.public.termsAndConditions}
+          />
+          <DialogInformative
+            open={openPrivacity}
+            onHandleClose={onHandleClosePrivacity}
+            title="POLÍTICA DE PRIVACIDAD:"
+            data={Meteor.settings.public.privacityPolicy}
+          />
+          <FormGroup>
+            <FormControlLabel
+              control={<Checkbox required />}
+              label={(
+                <div>
+                  <span>{t('Accepto los ')}</span>
+                  <RouteLink onClick={() => setOpenTerms(true)}>{t('términos y condiciones.')}</RouteLink>
+                </div>
+              )}
+            />
+          </FormGroup>
+          <FormGroup>
+            <FormControlLabel
+              control={<Checkbox required />}
+              label={(
+                <div>
+                  <span>{t('Accepto la ')}</span>
+                  <RouteLink onClick={() => setOpenPrivacity(true)}>{t('política de privacidad.')}</RouteLink>
+                </div>
+              )}
+            />
+          </FormGroup>
           <Grid
             container
             direction="row"
@@ -542,30 +680,30 @@ export function Registration() {
             }}
           >
             {
-                password2ValidationError && (
+              password2ValidationError && (
+              <Grid item xs={12}>
+                <Alert
+                  variant="filled"
+                  severity="error"
+                  sx={{ opacity: 0.7 }}
+                >
+                  {t('Las contraseñas deben coincidir.')}
+                </Alert>
+              </Grid>
+              )
+            }
+            {
+              (registrationError !== '') && (
                 <Grid item xs={12}>
                   <Alert
                     variant="filled"
                     severity="error"
                     sx={{ opacity: 0.7 }}
                   >
-                    {t('Las contraseñas deben coincidir.')}
+                    {t(registrationError)}
                   </Alert>
                 </Grid>
-                )
-            }
-            {
-                (registrationError !== '') && (
-                  <Grid item xs={12}>
-                    <Alert
-                      variant="filled"
-                      severity="error"
-                      sx={{ opacity: 0.7 }}
-                    >
-                      {t(registrationError)}
-                    </Alert>
-                  </Grid>
-                )
+              )
             }
             <Grid item xs={6}>
               <RoundedButton
