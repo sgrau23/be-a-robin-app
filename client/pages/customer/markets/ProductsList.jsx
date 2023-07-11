@@ -20,6 +20,7 @@ import {
   MarketsLastMinuteProductsCollection,
 } from '../../../../imports/db/collections';
 import { ProductCard } from '../../../components/products/ProductCard';
+import { calculateDistance } from '../../../../imports/utils';
 
 // Define tab classes
 const useStyles = makeStyles({
@@ -34,6 +35,7 @@ const useStyles = makeStyles({
 export function ProductList() {
   const { t } = useTranslation();
   const { id } = useParams();
+  const { coordinates } = Meteor.user().profile.preferences.location.coordinates;
   const type = useHistory().location.pathname.split('/')[1];
   const [marketData, setMarkeData] = useState();
   const [products, setProducts] = useState();
@@ -214,6 +216,14 @@ export function ProductList() {
                             fontSize: 10,
                           }}
                         >
+                          {`${t('Dirección: ')}${marketData.profile.preferences.address}, ${marketData.profile.preferences.postalcode}, ${marketData.profile.preferences.city}`}
+                        </Typography>
+                        <Typography
+                          sx={{
+                          // fontWeight: 'bold',
+                            fontSize: 10,
+                          }}
+                        >
                           {`${t('Horario: ')}${marketData.profile.preferences.schedule}`}
                         </Typography>
                         <Typography
@@ -224,17 +234,20 @@ export function ProductList() {
                         >
                           {marketData.profile.preferences.description}
                         </Typography>
+                        <Typography
+                          sx={{
+                            // fontWeight: 'bold',
+                            fontSize: 10,
+                          }}
+                        >
+                          {`${t('Se encuentra a')} ${calculateDistance(
+                            marketData.profile.preferences.coordinates.coordinates,
+                            coordinates,
+                          ).toFixed(2)} km ${t('de tu localización.')}`}
+                        </Typography>
                       </>
                     )
                   }
-                  <Typography
-                    sx={{
-                    // fontWeight: 'bold',
-                      fontSize: 10,
-                    }}
-                  >
-                    Se encuentra a 300 metros de tu localización.
-                  </Typography>
                 </Box>
               </Box>
             </Grid>

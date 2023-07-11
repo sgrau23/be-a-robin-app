@@ -15,6 +15,7 @@ import {
 import {
   getProductProposal, intolerances, products, productsSuperfamilies,
 } from './inuba';
+import { calculateDistance } from '../imports/utils';
 
 const { settings } = Meteor;
 
@@ -44,24 +45,6 @@ const removeHistoricalLastMinute = (_id) => {
   MarketsHistoricalLastMinuteProductsCollection.remove({ _id });
 };
 
-const deg2rad = (deg) => deg * (Math.PI / 180);
-
-const _getDistanceFromLatLonInKm = (lat1, lon1, lat2, lon2) => {
-  const R = 6371; // Radius of the earth in kilometers
-  const dLat = deg2rad(lat2 - lat1); // deg2rad below
-  const dLon = deg2rad(lon2 - lon1);
-  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-    + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2))
-    * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const d = R * c; // Distance in KM
-  return d;
-};
-
-const calculateDistance = (point1, point2) => _getDistanceFromLatLonInKm(
-  point1[1], point1[0], point2[1], point2[0],
-);
-
 const getCloserMarket = (markets, user) => {
   let closerMarket;
   let closerDistance = 10 ** 1000;
@@ -87,11 +70,7 @@ const getOnSalesMarketProducts = (marketName, category) => {
   const data = { products: [], marketName };
   result.forEach((product) => {
     data.products.push({
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      expirationDate: product.expirationDate,
-      marketName,
+      ...product,
     });
   });
   return data;
@@ -328,7 +307,6 @@ Meteor.methods({
     const user = Meteor.users.find({ _id }).fetch()[0];
     // Get iNuba purpose
     const inubaPurpose = getProductProposal(optimizerPreferences);
-    const finalPurpose = {};
     const involvedMarkets = [];
     let items = [];
     settings.public.dislikeCategories.forEach((category) => {

@@ -8,8 +8,7 @@ export function MarketProduct({
   product,
 }) {
   const { t } = useTranslation();
-  const { categoriesMapping } = Meteor.settings.public;
-
+  const { categories, categoriesMapping } = Meteor.settings.public;
   return (
     <Box
       maxWidth
@@ -48,7 +47,16 @@ export function MarketProduct({
                 fontWeight: 'bold',
               }}
             >
-              {product.name}
+              {product.productType}
+            </Typography>
+            <Typography
+              sx={{
+                fontWeight: 'bold',
+                fontStyle: 'italic',
+                fontSize: 12,
+              }}
+            >
+              {product.description}
             </Typography>
             <Typography
               sx={{
@@ -56,7 +64,7 @@ export function MarketProduct({
                 fontSize: 12,
               }}
             >
-              {t(categoriesMapping[product.category_id])}
+              {t(categoriesMapping[categories[product.category_id]])}
             </Typography>
             {
                 product.price ? (
@@ -66,6 +74,7 @@ export function MarketProduct({
                       fontSize: 12,
                     }}
                   >
+                    {t('Precio: ')}
                     {product.price}
                     €
                   </Typography>
@@ -88,6 +97,7 @@ export function MarketProduct({
                           fontSize: 12,
                         }}
                       >
+                        {t('Precio: ')}
                         {`${product.price_info.price}€ /`}
                       </Typography>
                     </Grid>

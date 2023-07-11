@@ -9,7 +9,7 @@ export function CustomerProduct({
   product, shoppingView = false, optimizerView = false,
 }) {
   const { t } = useTranslation();
-  const { categoriesMapping } = Meteor.settings.public;
+  const { categories, categoriesMapping } = Meteor.settings.public;
   const [openDetails, setOpenDetails] = useState(false);
 
   const onHandleClose = () => {
@@ -65,95 +65,106 @@ export function CustomerProduct({
                   fontWeight: 'bold',
                 }}
               >
-                {product.name}
+                {product.productType}
               </Typography>
               {
-            (shoppingView || optimizerView) && (
-            <Typography
-              sx={{
-                fontStyle: 'italic',
-                fontWeight: 'bold',
-                fontSize: 12,
-                color: 'primary.main',
-              }}
-            >
-              {product.marketName}
-            </Typography>
-            )
+                (shoppingView || optimizerView) && (
+                  <Typography
+                    sx={{
+                      fontStyle: 'italic',
+                      fontWeight: 'bold',
+                      fontSize: 12,
+                      color: 'primary.main',
+                    }}
+                  >
+                    {product.marketName}
+                  </Typography>
+                )
+              }
+              <Typography
+                sx={{
+                  fontWeight: 'bold',
+                  fontStyle: 'italic',
+                  fontSize: 12,
+                }}
+              >
+                {product.description}
+              </Typography>
+              <Typography
+                sx={{
+                  fontStyle: 'italic',
+                  fontSize: 12,
+                }}
+              >
+                {t(categoriesMapping[categories[product.category_id]])}
+              </Typography>
+              {
+                product.price ? (
+                  <Typography
+                    sx={{
+                      fontStyle: 'italic',
+                      fontSize: 12,
+                    }}
+                  >
+                    {t('Precio: ')}
+                    {product.price}
+                    €
+                  </Typography>
+                ) : (
+                  product.price_info && (
+                    <Grid
+                      container
+                      columns={{
+                        xs: 12, sm: 12, md: 12, lg: 12,
+                      }}
+                      spacing={{
+                        xs: 1, sm: 1, md: 1, lg: 1,
+                      }}
+                    >
+                      <Grid
+                        item
+                      >
+                        <Typography
+                          sx={{
+                            fontStyle: 'italic',
+                            fontSize: 12,
+                          }}
+                        >
+                          {t('Precio: ')}
+                          {`${product.price_info.price}€ /`}
+                        </Typography>
+                      </Grid>
+                      <Grid
+                        item
+                      >
+                        <Typography
+                          sx={{
+                            textDecoration: 'line-through',
+                            color: 'red',
+                            fontSize: 12,
+                          }}
+                        >
+                          {`${product.price_info.prev_price}€`}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  )
+                )
             }
-              <Typography
-                sx={{
-                  fontStyle: 'italic',
-                  fontSize: 12,
-                }}
-              >
-                {t(categoriesMapping[product.category_id])}
-              </Typography>
-              {
-            product.price ? (
-              <Typography
-                sx={{
-                  fontStyle: 'italic',
-                  fontSize: 12,
-                }}
-              >
-                {product.price}
-                €
-              </Typography>
-            ) : (
-              product.price_info && (
-                <Grid
-                  container
-                  columns={{
-                    xs: 12, sm: 12, md: 12, lg: 12,
-                  }}
-                  spacing={{
-                    xs: 1, sm: 1, md: 1, lg: 1,
-                  }}
-                >
-                  <Grid
-                    item
-                  >
-                    <Typography
-                      sx={{
-                        fontStyle: 'italic',
-                        fontSize: 12,
-                      }}
-                    >
-                      {`${product.price_info.price}€ /`}
-                    </Typography>
-                  </Grid>
-                  <Grid
-                    item
-                  >
-                    <Typography
-                      sx={{
-                        textDecoration: 'line-through',
-                        color: 'red',
-                        fontSize: 12,
-                      }}
-                    >
-                      {`${product.price_info.prev_price}€`}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              )
-            )
-        }
 
               {
-          product.expirationDate && (
-          <Typography
-            sx={{
-              fontStyle: 'italic',
-              fontSize: 10,
-              color: 'red',
-            }}
-          >
-              {`${t('Expira el')} ${product.expirationDate}`}
-          </Typography>
-          )
-        }
+              product.expirationDate && (
+              <Typography
+                sx={{
+                  fontStyle: 'italic',
+                  fontSize: 10,
+                  color: 'red',
+                }}
+              >
+                  {`${t('Expira el')} ${product.expirationDate}`}
+              </Typography>
+              )
+            }
 
             </Grid>
             <Grid

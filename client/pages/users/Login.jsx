@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Backdrop, Typography, Grid, Link, CircularProgress, FormControl, Box,
+  Backdrop, Grid, CircularProgress, FormControl, Box,
   Alert, InputAdornment, IconButton,
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { Link as RouteLink, useHistory } from 'react-router-dom';
-import { RoundedButton, TextInput, WhiteTypography } from '../../styles/styledComponents';
+import { RoundedButton, TextInput } from '../../styles/styledComponents';
 
 export function Login() {
   const { t } = useTranslation();
@@ -58,31 +58,33 @@ export function Login() {
           alignItems="center"
           direction="column"
           rowSpacing={2}
+          sx={{
+            marginTop: '30px',
+          }}
         >
           <Grid item xs={12}>
             <Box
               component="img"
-              src="logo.jpg"
+              src="logo_title.png"
               sx={{
                 flexGrow: 0,
-                maxHeight: '25%',
-                borderRadius: 5,
+                height: '250px',
+                width: '250px',
+                borderRadius: 40,
+                backgroundColor: '#e6e6e6',
                 boxShadow: '0px 6px 6px -3px rgba(0,0,0,0.2), 0px 10px 14px 1px rgba(0,0,0,0.14), 0px 4px 18px 3px rgba(0,0,0,0.12)',
               }}
             />
           </Grid>
-          <Grid item xs={12}>
-            <WhiteTypography
-              variant="h5"
-              color="white"
-            >
-              BE A ROBIN
-            </WhiteTypography>
-          </Grid>
         </Grid>
       </Box>
 
-      <Box sx={{ padding: '5%' }}>
+      <Box
+        sx={{
+          padding: '5%',
+          marginTop: '20px',
+        }}
+      >
         <FormControl required fullWidth>
           <Grid container spacing={2} alignItems="center" textAlign="center">
             <Grid item xs={12}>

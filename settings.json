@@ -30,6 +30,18 @@
         }
     },
     "public": {
+        "categories": {
+            "1": "grains",
+            "2": "eggs",
+            "3": "meat",
+            "4": "fruits",
+            "5": "vegetables",
+            "6": "oils",
+            "9": "fish",
+            "10": "Otros",
+            "12": "legumes",
+            "14": "species"
+        },
         "termsAndConditions": [
             {
                 "title": "CONDICIONES GENERALES DE CONTRATACIÓN PARA EL USO DE ROBIN SHOP APP",

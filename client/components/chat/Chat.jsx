@@ -75,7 +75,7 @@ export function Chat() {
         color="primary"
         style={{
           bottom: 70,
-          right: 5,
+          right: '15px',
           left: 'auto',
           position: 'fixed',
           height: '50px',

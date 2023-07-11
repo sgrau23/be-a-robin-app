@@ -8,10 +8,12 @@ import { CustomerFooterNavbar } from '../../../components/navigations/CustomerFo
 import { ProductCard } from '../../../components/products/ProductCard';
 import { PurchaseOptimizerTopNavbar } from '../../../components/navigations/PurchaseOptimizerTopNavbar';
 import { OptimizedPurchaseCollection } from '../../../../imports/db/collections';
+import { Loader } from '../../../components/others/Loader';
 
 export function PurchaseOptimizer() {
   const { t } = useTranslation();
   const [purchasePurpose, setPurchasePurpose] = useState([]);
+  const [visiblePurchasePurpose, setVisiblePurchasePurpose] = useState([]);
   const user = Meteor.user();
   const [customerPreferences, setCustomerPreferences] = useState(user.profile.preferences);
   const [openOptimizerPreferencesForm, setOpenOptimizerPreferencesForm] = useState(false);
@@ -27,7 +29,10 @@ export function PurchaseOptimizer() {
         },
       ).fetch().pop();
       if (!data) setOpenOptimizerPreferencesForm(true);
-      else setPurchasePurpose(data.products);
+      else {
+        setPurchasePurpose(data.products);
+        setVisiblePurchasePurpose(data.products);
+      }
     }
   }, []);
   return (
@@ -36,7 +41,8 @@ export function PurchaseOptimizer() {
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={purchasePurpose.length === 0}
       >
-        <CircularProgress color="inherit" />
+        {/* <CircularProgress color="inherit" /> */}
+        <Loader />
       </Backdrop>
       <Box
         sx={{
@@ -51,6 +57,8 @@ export function PurchaseOptimizer() {
           openOptimizerPreferencesForm={openOptimizerPreferencesForm}
           setOpenOptimizerPreferencesForm={setOpenOptimizerPreferencesForm}
           setPurchasePurpose={setPurchasePurpose}
+          purchasePurpose={purchasePurpose}
+          setVisiblePurchasePurpose={setVisiblePurchasePurpose}
         />
         <Grid
           container
@@ -62,7 +70,7 @@ export function PurchaseOptimizer() {
           }}
         >
           {
-            purchasePurpose.map((product) => (
+            visiblePurchasePurpose.map((product) => (
               <Grid
                 item
                 xs={12}

@@ -8,10 +8,12 @@ import {
 import {
   MarketsLastMinuteProductsCollection,
 } from '../../../imports/db/collections';
+import { calculateDistance } from '../../../imports/utils';
 
 export function MarketCard({ data, id, type }) {
   const { t } = useTranslation();
   const [totalLastMinuteProducts, setTotalLastMinuteProducts] = useState(0);
+  const { coordinates } = Meteor.user().profile.preferences.location.coordinates;
   // Get last minute market products
   useTracker(() => {
     if (type !== 'supermarkets') {
@@ -98,23 +100,31 @@ export function MarketCard({ data, id, type }) {
                   {t(name)}
                 </Typography>
               </Grid>
-              <Grid
-                item
-                xs={4}
-                sm={4}
-                md={4}
-                lg={4}
-              >
-                <Typography
-                  sx={{
-                    fontStyle: 'italic',
-                    fontSize: 12,
-                    textAlign: 'right',
-                  }}
-                >
-                  {t('a 300 metros')}
-                </Typography>
-              </Grid>
+              {
+                type !== 'supermarkets' && (
+                  <Grid
+                    item
+                    xs={4}
+                    sm={4}
+                    md={4}
+                    lg={4}
+                  >
+                    <Typography
+                      sx={{
+                        fontStyle: 'italic',
+                        fontSize: 12,
+                        textAlign: 'right',
+                      }}
+                    >
+                      {`a ${calculateDistance(
+                        data.profile.preferences.coordinates.coordinates,
+                        coordinates,
+                      ).toFixed(2)} km`}
+                    </Typography>
+                  </Grid>
+                )
+              }
+
               {
                 type !== 'supermarkets' && (
                 <Grid

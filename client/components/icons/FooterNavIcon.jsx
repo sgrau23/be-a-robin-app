@@ -69,6 +69,8 @@ export function FooterNavIcon({
           <Typography
             sx={{
               fontSize: 10,
+              // fontWeight: 'bold',
+              color: 'secondary.main',
             }}
           >
             {t(text)}

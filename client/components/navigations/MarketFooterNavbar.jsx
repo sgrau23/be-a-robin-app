@@ -3,6 +3,8 @@ import {
   AppBar, Grid, Button, CardActions, Dialog,
   DialogTitle, DialogContent, FormControl, InputLabel,
   Select, MenuItem, InputAdornment, Alert, Fab,
+  Autocomplete,
+  Typography,
 } from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import HomeIcon from '@mui/icons-material/Home';
@@ -20,15 +22,17 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TextInput } from '../../styles/styledComponents';
 import { FooterNavIcon } from '../icons/FooterNavIcon';
+import { productTypes } from '../../../imports/inubaVariables';
 
 require('dayjs/locale/es');
 
 dayjs.locale('es');
 
 const defaultProductData = {
-  name: '',
+  description: '',
   category_id: '',
   image: undefined,
+  productType: '',
   price: 0,
   expirationDate: dayjs().endOf('week'),
   offerType: 'offer',
@@ -89,6 +93,7 @@ export function MarketFooterNavbar() {
 
   const onHandleAddProduct = (e) => {
     const data = { ...productData };
+    console.log(data);
     data.expirationDate = data.expirationDate.$d.toLocaleDateString(
       'es-ES', {
         year: 'numeric',
@@ -136,7 +141,14 @@ export function MarketFooterNavbar() {
             }}
             onClick={() => setOpenAddModal(false)}
           />
-          {t('Añadir producto en oferta:')}
+          <Typography
+            sx={{
+              fontWeight: 'bold',
+              fontSize: '20px',
+            }}
+          >
+            {t('Añadir producto en oferta:')}
+          </Typography>
         </DialogTitle>
         <DialogContent>
           <form onSubmit={onHandleAddProduct}>
@@ -196,14 +208,44 @@ export function MarketFooterNavbar() {
                 md={12}
                 lg={12}
               >
+                <Autocomplete
+                  // disablePortal
+                  id="productType"
+                  options={productTypes}
+                  onChange={(event, value) => {
+                    console.log(value);
+                    setProductData({ ...productData, productType: value.label });
+                  }}
+                  // sx={{ width: 300 }}
+                  renderInput={
+                    (params) => (
+                      <TextInput
+                        required
+                        value={productData.productType}
+                        variant="filled"
+                        name="productType"
+                        {...params}
+                        label={t('Tipo producto')}
+                      />
+                    )
+                  }
+                />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                md={12}
+                lg={12}
+              >
                 <TextInput
-                  label={t('Nombre producto')}
+                  label={t('Descripción')}
                   variant="filled"
-                  name="name"
-                  type="name"
+                  name="description"
+                  type="description"
                   autoComplete=""
                   onChange={onHandleProductData}
-                  value={productData.name}
+                  value={productData.description}
                   fullWidth
                   required
                 />
