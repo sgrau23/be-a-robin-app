@@ -8,7 +8,7 @@ export function MarketProduct({
   product,
 }) {
   const { t } = useTranslation();
-  const { categories, categoriesMapping } = Meteor.settings.public;
+  // const { categories, categoriesMapping } = Meteor.settings.public;
   return (
     <Box
       maxWidth
@@ -64,7 +64,8 @@ export function MarketProduct({
                 fontSize: 12,
               }}
             >
-              {t(categoriesMapping[categories[product.category_id]])}
+              {/* {t(categoriesMapping[categories[product.category_id]])} */}
+              {t(product.category_id)}
             </Typography>
             {
                 product.price ? (

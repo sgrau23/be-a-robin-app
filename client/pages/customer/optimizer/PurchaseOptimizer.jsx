@@ -17,6 +17,8 @@ export function PurchaseOptimizer() {
   const user = Meteor.user();
   const [customerPreferences, setCustomerPreferences] = useState(user.profile.preferences);
   const [openOptimizerPreferencesForm, setOpenOptimizerPreferencesForm] = useState(false);
+  const [availableMarkets, setAvailableMarkets] = useState([]);
+  const [availableCategories, setAvailableCategories] = useState([]);
 
   // Get current market data
   useTracker(() => {
@@ -32,6 +34,8 @@ export function PurchaseOptimizer() {
       else {
         setPurchasePurpose(data.products);
         setVisiblePurchasePurpose(data.products);
+        setAvailableMarkets(data.involvedMarkets);
+        setAvailableCategories(data.involvedCategories);
       }
     }
   }, []);
@@ -41,7 +45,6 @@ export function PurchaseOptimizer() {
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={purchasePurpose.length === 0}
       >
-        {/* <CircularProgress color="inherit" /> */}
         <Loader />
       </Backdrop>
       <Box
@@ -59,6 +62,10 @@ export function PurchaseOptimizer() {
           setPurchasePurpose={setPurchasePurpose}
           purchasePurpose={purchasePurpose}
           setVisiblePurchasePurpose={setVisiblePurchasePurpose}
+          availableMarkets={availableMarkets}
+          availableCategories={availableCategories}
+          setAvailableMarkets={setAvailableMarkets}
+          setAvailableCategories={setAvailableCategories}
         />
         <Grid
           container

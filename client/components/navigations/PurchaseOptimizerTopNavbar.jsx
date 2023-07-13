@@ -1,19 +1,45 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   AppBar, Grid, Typography, Box, Drawer,
 } from '@mui/material';
+
 import Toolbar from '@mui/material/Toolbar';
 import TuneIcon from '@mui/icons-material/Tune';
+import _ from 'lodash';
 import { OptimizerPreferencesForm } from '../optimizer/OptimizerPreferencesForm';
+import { MultiSelector } from '../others/MultiSelector';
 
 export function PurchaseOptimizerTopNavbar({
   text, customerPreferences, setCustomerPreferences,
   openOptimizerPreferencesForm, setOpenOptimizerPreferencesForm,
   setPurchasePurpose, purchasePurpose, setVisiblePurchasePurpose,
+  availableMarkets, availableCategories, setAvailableMarkets,
+  setAvailableCategories,
 }) {
   // Translations
   const { t } = useTranslation();
+  const [selectedMarkets, setSelectedMarkets] = useState(availableMarkets);
+  const [selectedCategories, setSelectedCategories] = useState(availableCategories.map(
+    (value) => value,
+  ));
+
+  useEffect(() => {
+    setVisiblePurchasePurpose(
+      _.filter(
+        purchasePurpose,
+        (product) => (
+          (
+            selectedMarkets.includes(product.marketName) || selectedMarkets.length === 0
+          )
+          && (
+            selectedCategories.includes(product.category_id) || selectedCategories.length === 0
+          )
+        ),
+      ),
+    );
+  }, [selectedMarkets, selectedCategories]);
+
   const onHandleCloseOptimizerForm = () => {
     setOpenOptimizerPreferencesForm(false);
   };
@@ -33,17 +59,88 @@ export function PurchaseOptimizerTopNavbar({
       else {
         setPurchasePurpose(result.products);
         setVisiblePurchasePurpose(result.products);
+        setAvailableMarkets(result.involvedMarkets);
+        setAvailableCategories(result.involvedCategories);
       }
     });
   };
 
+  const onHandleMarketsFilter = (event, values) => setSelectedMarkets(values);
+  const onHandleCategoriesFilter = (event, values) => { setSelectedCategories(values); };
+
   const list = () => (
     <Box
-      sx={{ height: '200px' }}
+      sx={{
+        // height: '200px',
+        flexGrow: 1,
+      }}
       role="presentation"
-      onClick={toggleDrawer(false)}
-      onKeyDown={toggleDrawer(false)}
-    />
+      // onClick={toggleDrawer(false)}
+      // onKeyDown={toggleDrawer(false)}
+    >
+      <Box
+        sx={{
+          margin: '20px',
+        }}
+      >
+        <Grid
+          container
+          columns={{
+            xs: 12, sm: 12, md: 12, lg: 12,
+          }}
+          spacing={{
+            xs: 2, sm: 2, md: 3, lg: 3,
+          }}
+        >
+          <Grid
+            item
+            xs={12}
+            sm={12}
+            md={12}
+            lg={12}
+          >
+            <Typography
+              sx={{
+                fontWeight: 'bold',
+                fontSize: 30,
+              }}
+            >
+              {t('Filtra tu propuesta:')}
+            </Typography>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={12}
+            md={12}
+            lg={12}
+          >
+            <MultiSelector
+              id="marketsFilter"
+              text={t('Filtro mercados')}
+              options={availableMarkets}
+              onHandleChange={onHandleMarketsFilter}
+              selectedOptions={selectedMarkets}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={12}
+            md={12}
+            lg={12}
+          >
+            <MultiSelector
+              id="categoriesFilter"
+              text={t('Filtro categorías')}
+              options={availableCategories}
+              onHandleChange={onHandleCategoriesFilter}
+              selectedOptions={selectedCategories}
+            />
+          </Grid>
+        </Grid>
+      </Box>
+    </Box>
   );
 
   return (

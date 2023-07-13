@@ -9,7 +9,6 @@ export function CustomerProduct({
   product, shoppingView = false, optimizerView = false,
 }) {
   const { t } = useTranslation();
-  const { categories, categoriesMapping } = Meteor.settings.public;
   const [openDetails, setOpenDetails] = useState(false);
 
   const onHandleClose = () => {
@@ -96,7 +95,7 @@ export function CustomerProduct({
                   fontSize: 12,
                 }}
               >
-                {t(categoriesMapping[categories[product.category_id]])}
+                {t(product.catgory_id)}
               </Typography>
               {
                 product.price ? (

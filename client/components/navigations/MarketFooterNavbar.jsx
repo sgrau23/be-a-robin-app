@@ -22,7 +22,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TextInput } from '../../styles/styledComponents';
 import { FooterNavIcon } from '../icons/FooterNavIcon';
-import { productTypes } from '../../../imports/inubaVariables';
+import { productTypes, categories } from '../../../imports/inubaVariables';
 
 require('dayjs/locale/es');
 
@@ -36,6 +36,7 @@ const defaultProductData = {
   price: 0,
   expirationDate: dayjs().endOf('week'),
   offerType: 'offer',
+  unit: '€/kg',
 };
 
 export function MarketFooterNavbar() {
@@ -43,7 +44,7 @@ export function MarketFooterNavbar() {
   const { t } = useTranslation();
   const [openAddModal, setOpenAddModal] = useState(false);
   const [addError, setAddError] = useState(false);
-  const [categories, setCategories] = useState([]);
+  const { priceTypes } = Meteor.settings.public;
   // Product data
   const [productData, setProductData] = useState(defaultProductData);
   const navIcons = [
@@ -76,11 +77,6 @@ export function MarketFooterNavbar() {
       key="perfil"
     />,
   ];
-
-  Meteor.call('products.categories', (error, result) => {
-    if (error) console.log(error);
-    else setCategories(result);
-  });
 
   const onHandleProductData = (e) => {
     if (e.target.name === 'offerType' && e.target.value === 'offer') {
@@ -271,7 +267,7 @@ export function MarketFooterNavbar() {
                       Object.entries(categories).map(([id, name]) => (
                         <MenuItem
                           id={id}
-                          value={id}
+                          value={name}
                           key={id}
                         >
                           {t(name)}
@@ -284,10 +280,10 @@ export function MarketFooterNavbar() {
               </Grid>
               <Grid
                 item
-                xs={12}
-                sm={12}
-                md={12}
-                lg={12}
+                xs={6}
+                sm={6}
+                md={6}
+                lg={6}
               >
                 <TextInput
                   label={t('Precio')}
@@ -299,12 +295,40 @@ export function MarketFooterNavbar() {
                   fullWidth
                   value={productData.price}
                   required
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">€/Kg</InputAdornment>
-                    ),
-                  }}
                 />
+              </Grid>
+              <Grid
+                item
+                xs={6}
+                sm={6}
+                md={6}
+                lg={6}
+              >
+                <FormControl fullWidth>
+                  <InputLabel id="unit-select-label">{t('Tipo precio')}</InputLabel>
+                  <Select
+                    labelId="unit-select-label"
+                    value={productData.unit}
+                    label={t('Tipo precio')}
+                    onChange={onHandleProductData}
+                    name="unit"
+                    variant="filled"
+                    required
+                  >
+                    {(
+                      priceTypes.map((value) => (
+                        <MenuItem
+                          id={value}
+                          value={value}
+                          key={value}
+                        >
+                          {t(value)}
+                        </MenuItem>
+                      ))
+                    )}
+                  </Select>
+
+                </FormControl>
               </Grid>
               <Grid
                 item

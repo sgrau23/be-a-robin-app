@@ -5,7 +5,7 @@ import {
 
 export function Loader() {
   return (
-    <Box sx={{ width: '100%', height: '100%', backgroundColor: 'secondary.main' }}>
+    <Box sx={{ width: '100%', height: '100%', backgroundColor: '#e6e6e6' }}>
       <LinearProgress />
       <Box
         component="img"

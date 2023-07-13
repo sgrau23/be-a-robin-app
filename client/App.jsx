@@ -42,7 +42,6 @@ export function App() {
             loggedIn
               ? (
                 <>
-                  {/* <PropsRoute component={Navbar} /> */}
                   <Switch>
                     {
                       userType === 'comercio' && (
@@ -80,33 +79,11 @@ export function App() {
                           <PropsRoute exact path="/customerPreferences" component={CustomerPreferences} />
 
                           <PropsRoute exact path="/purchaseOptimizer" component={PurchaseOptimizer} />
-
-                          {/* <PropsRoute exact path="/marketsOffers" component={Markets} />
-                          <PropsRoute exact path="/marketsOffers/:id" component={MarketProducts} />
-
-                          <PropsRoute exact path="/marketsLastMinute" component={MarketsLastMinute} />
-                          <PropsRoute exact path="/marketsLastMinute/:id" component={MarketLastMinuteProducts} />
-
-                          <PropsRoute exact path="/supermarkets" component={Supermarkets} />
-                          <PropsRoute exact path="/supermarkets/:id" component={SupermarketProducts} /> */}
-
                         </>
                       )
                     }
-                    {/* <PropsRoute component={NotFound} /> */}
                   </Switch>
                   <PropsRoute component={Chat} />
-                  {/* {
-                    userType === 'comercio' && (
-                      <PropsRoute component={MarketFooterNavbar} />
-                    )
-                  }
-                  {
-                    userType === 'cliente' && (
-                      <PropsRoute component={CustomerFooterNavbar} />
-                    )
-                  } */}
-
                 </>
               )
               : (

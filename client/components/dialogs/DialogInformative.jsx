@@ -1,7 +1,7 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  DialogTitle, DialogContentText,
+  DialogTitle, DialogContentText, Box,
   DialogContent, Typography, Dialog,
 } from '@mui/material';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
@@ -37,9 +37,11 @@ export function DialogInformative({
         <DialogContentText id="dialog-description">
           {
             data.map((element) => (
-              <>
+              <Box
+                key={element.title}
+                component="span"
+              >
                 <Typography
-                  key={`title_${element.title}`}
                   sx={{
                     fontWeight: 'bold',
                     fontSize: 17,
@@ -50,7 +52,6 @@ export function DialogInformative({
                   {element.title}
                 </Typography>
                 <Typography
-                  key={`text_${element.title}`}
                   sx={{
                     fontSize: 14,
                     marginTop: '5px',
@@ -58,7 +59,7 @@ export function DialogInformative({
                 >
                   {element.text}
                 </Typography>
-              </>
+              </Box>
             ))
           }
         </DialogContentText>

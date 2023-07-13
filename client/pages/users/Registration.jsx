@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Backdrop, Grid, Divider, CircularProgress, FormControl, Box,
-  Avatar, Link, InputAdornment, IconButton, FormControlLabel, RadioGroup,
+  Avatar, InputAdornment, IconButton, FormControlLabel, RadioGroup,
   Radio, InputLabel, Select, MenuItem, Alert, DialogTitle, DialogContentText,
   DialogContent, DialogActions, Dialog, Button, Chip, Fab, Checkbox, FormGroup,
 } from '@mui/material';
@@ -19,6 +19,7 @@ import {
   WhiteTypography, TextInput, RoundedButton,
 } from '../../styles/styledComponents';
 import { DialogInformative } from '../../components/dialogs/DialogInformative';
+import { categories } from '../../../imports/inubaVariables';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -31,10 +32,10 @@ const MenuProps = {
   },
 };
 
-function getStyles(id, categories, theme) {
+function getStyles(id, cats, theme) {
   return {
     fontWeight:
-      categories.indexOf(id) === -1
+      cats.indexOf(id) === -1
         ? theme.typography.fontWeightRegular
         : theme.typography.fontWeightMedium,
   };
@@ -49,11 +50,7 @@ export function Registration() {
   const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
   const [openTerms, setOpenTerms] = useState(false);
   const [openPrivacity, setOpenPrivacity] = useState(false);
-  const [categories, setCategories] = useState({});
-  Meteor.call('products.categories', (err, result) => {
-    if (err) console.log(err);
-    else setCategories(result);
-  });
+
   const onHandleCloseConfirmationDialog = () => {
     setOpenConfirmationDialog(false);
   };
@@ -111,8 +108,10 @@ export function Registration() {
     const {
       target: { value },
     } = event;
-    marketData.categories = (typeof value === 'string' ? value.split(',') : value);
-    setMarketData(marketData);
+    setMarketData({
+      ...marketData,
+      categories: (typeof value === 'string' ? value.split(',') : value),
+    });
   };
 
   const onHandleEco = (event) => {
@@ -142,9 +141,11 @@ export function Registration() {
         }
         setRegistrationError('');
         history.push('/');
-        return true;
-      });
+        return false;
+      },
+    );
     setLoading(false);
+    return false;
   };
 
   const onHandleUploadClick = (e) => {
@@ -170,7 +171,7 @@ export function Registration() {
         <CircularProgress color="success" />
       </Backdrop>
       <Box sx={{ padding: '2%' }}>
-        <form onSubmit={onHandleSubmit} action={<Link to="/" />}>
+        <form onSubmit={onHandleSubmit}>
           <Grid
             container
             direction="column"
@@ -187,7 +188,9 @@ export function Registration() {
                 spacing={2}
               >
                 <Grid item>
-                  <Avatar src="logo.jpg" />
+                  <Avatar
+                    src="logo_notitle.png"
+                  />
                 </Grid>
                 <Grid item>
                   <WhiteTypography
@@ -508,7 +511,7 @@ export function Registration() {
                     value={marketData.categories}
                     label={t('Categorías comercio')}
                     onChange={onHandleCategories}
-                    name="categories"
+                    // name="categories"
                     variant="filled"
                     renderValue={(selected) => (
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
@@ -654,7 +657,7 @@ export function Registration() {
               label={(
                 <div>
                   <span>{t('Accepto los ')}</span>
-                  <RouteLink onClick={() => setOpenTerms(true)}>{t('términos y condiciones.')}</RouteLink>
+                  <RouteLink to="#" onClick={() => setOpenTerms(true)}>{t('términos y condiciones.')}</RouteLink>
                 </div>
               )}
             />
@@ -665,7 +668,7 @@ export function Registration() {
               label={(
                 <div>
                   <span>{t('Accepto la ')}</span>
-                  <RouteLink onClick={() => setOpenPrivacity(true)}>{t('política de privacidad.')}</RouteLink>
+                  <RouteLink to="#" onClick={() => setOpenPrivacity(true)}>{t('política de privacidad.')}</RouteLink>
                 </div>
               )}
             />
